@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" className="scroll-smooth">
+	<head>
+		<meta charset="utf-8" />
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
+		<meta content="width=device-width, initial-scale=1" name="viewport" />
+
+		<meta name="msapplication-TileColor" content="#000000" />
+		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
+		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
+		<link rel="alternate" type="application/rss+xml" href="/feed.xml" />
+		<link rel="icon" href="/favicon.ico" />
+		
+		<link rel="modulepreload" href="/_app/immutable/entry/start.dbb9302c.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/index.789cc631.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/singletons.9aacebe7.js">
+		<link rel="modulepreload" href="/_app/immutable/entry/app.bc9fab1d.js">
+	</head>
+	<!-- <body class="flex flex-col h-screen"> -->
+	<body
+		class="bg-white text-black antialiased dark:bg-gray-900 dark:text-white"
+		data-sveltekit-prefetch
+	>
+		<div style="display: contents">
+			<script>
+				{
+					__sveltekit_skfdg3 = {
+						base: "",
+						env: {}
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("/_app/immutable/entry/start.dbb9302c.js"),
+						import("/_app/immutable/entry/app.bc9fab1d.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+				}
+			</script>
+		</div>
+	</body>
+	<script>
+		if (localStorage.theme === 'dark') document.documentElement.classList.add('dark');
+	</script>
+</html>

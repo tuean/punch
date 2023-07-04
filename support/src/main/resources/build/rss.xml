@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title><![CDATA[Tuean (un)official blog - RSS Feed]]></title>
+        <description><![CDATA[Tuean (un)official blog - RSS Feed]]></description>
+        <link>https://pied-piper-blog.netlify.app</link>
+        <generator>RSS for Node</generator>
+        <lastBuildDate>Mon, 26 Jun 2023 12:39:58 GMT</lastBuildDate>
+        <atom:link href="https://pied-piper-blog.netlify.app/rss.xml" rel="self" type="application/rss+xml"/>
+        <item>
+            <title><![CDATA[accessException]]></title>
+            <description><![CDATA[The creators of HBO's Silicon Valley could have glossed over the breakthrough technology behind fictional start-up Pied Piper...]]></description>
+            <link>https://pied-piper-blog.netlify.app/accessException</link>
+            <guid isPermaLink="true">https://pied-piper-blog.netlify.app/accessException</guid>
+            <pubDate>Mon, 18 Nov 2019 00:00:00 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[A Stanford engineer built the fake compression algorithm in HBO's 'Silicon Valley']]></title>
+            <description><![CDATA[The creators of HBO's Silicon Valley could have glossed over the breakthrough technology behind fictional start-up Pied Piper...]]></description>
+            <link>https://pied-piper-blog.netlify.app/a-stanford-engineer-built-the-fake-compression-algorithm-in-hbos-silicon-valley</link>
+            <guid isPermaLink="true">https://pied-piper-blog.netlify.app/a-stanford-engineer-built-the-fake-compression-algorithm-in-hbos-silicon-valley</guid>
+            <pubDate>Thu, 24 Jul 2014 00:00:00 GMT</pubDate>
+        </item>
+    </channel>
+</rss>
