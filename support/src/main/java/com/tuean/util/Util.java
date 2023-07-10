@@ -118,8 +118,8 @@ public class Util {
 
     public static void main(String[] args) {
         System.out.println(generateRandomString(25));
-        File file = new File("D:\\IdeaProjects\\punch\\support\\src\\main\\resources\\build");
-        System.out.println(file);
+//        File file = new File("D:\\IdeaProjects\\punch\\support\\src\\main\\resources\\build");
+//        System.out.println(file);
     }
 
 

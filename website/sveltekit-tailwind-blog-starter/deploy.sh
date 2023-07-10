@@ -1,22 +1,29 @@
 #!/bin/bash
 
-# 本地目录路径
-local_path="./archive"
+set -e -x
 
-# 远程服务器信息
-remote_user="tuean"
+./build.sh
+
+local_path="./archive" # 本地目录路径
+
+remote_user="root"
 remote_host="oursweetlife.site"
 remote_path="/opt/blog"
 
-# 删除远程目录
+# todo first
+#ln -s /usr/local/lib/node/nodejs/bin/pm2 /usr/local/bin/ # avoid error: pm2: command not found
+#ln -s /usr/local/lib/node/nodejs/bin/node /usr/local/bin/ # avoid error:  /usr/bin/env: ‘node’: No such file or directory
+# stop the old server process
+ssh "${remote_user}@${remote_host}" "cd ${remote_path} && pm2 stop ./build/index.js"
+
+# delete the old files
 ssh "${remote_user}@${remote_host}" "rm -rf ${remote_path}"
 
-# 将本地目录上传至远程服务器
-#rsync -rltDvz --delete "${local_path}/" "${remote_user}@${remote_host}:${remote_path}"
+# upload files
 scp -r "${local_path}/" "${remote_user}@${remote_host}:${remote_path}"
 
-# 在远程服务器上执行命令
-ssh "${remote_user}@${remote_host}" "cd ${remote_path} && node build"
+# start the new server
+ssh "${remote_user}@${remote_host}" "cd ${remote_path} && pm2 start ./build/index.js"
 
-forever start ./build/index.js
-
+#forever start ./build/index.js
+echo 'successfully started'

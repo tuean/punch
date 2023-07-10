@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# set -e
+set -o errexit
+
 rm -rf ./archive
 
 mkdir archive
