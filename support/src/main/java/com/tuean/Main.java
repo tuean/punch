@@ -28,7 +28,6 @@ public class Main {
             logger.error("read config error");
             return;
         }
-//        String packageName = Main.class.getPackageName();
         String packageName = "com.tuean";
         logger.info("punch start");
         ApplicationContext context = new AnnotationConfigApplicationContext(packageName);

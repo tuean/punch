@@ -6,7 +6,9 @@ import org.springframework.http.server.PathContainer;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -111,6 +113,10 @@ public class Util {
 
     public static String md5(String input) {
         return md5(input.getBytes());
+    }
+
+    public static long fileSize(Path path) throws IOException {
+        return Files.size(path);
     }
 
 

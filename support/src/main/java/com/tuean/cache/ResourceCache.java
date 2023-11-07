@@ -1,6 +1,5 @@
 package com.tuean.cache;
 
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -10,10 +9,6 @@ import com.tuean.file.PropertiesFileReader;
 import com.tuean.util.Util;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
@@ -23,24 +18,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static com.tuean.consts.Const.URL_PATH_STR;
 
-//@Component
 @Slf4j
 public class ResourceCache {
 
     public static final String PREFIX = "";
-    public LoadingCache getCache() {
+    public LoadingCache<String, FileContent> getCache() {
         return fileCache;
     }
 
-    private LoadingCache<String, FileContent> fileCache = CacheBuilder.newBuilder()
+    private final LoadingCache<String, FileContent> fileCache = CacheBuilder.newBuilder()
             .maximumSize(1024)
-//            .refreshAfterWrite(10, TimeUnit.SECONDS)
             .build(new CacheLoader<>() {
                 @Override
                 public FileContent load(String s) throws Exception {
