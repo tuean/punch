@@ -14,7 +14,6 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StopWatch;
 
 public class HttpServer {
 
@@ -33,7 +32,7 @@ public class HttpServer {
         this.router = router;
     }
 
-    public void run(StopWatch stopWatch) throws InterruptedException {
+    public void run() throws InterruptedException {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -53,8 +52,7 @@ public class HttpServer {
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
             ChannelFuture f = b.bind(port).sync();
-            stopWatch.stop();
-            logger.info("started on port:{} cost:{} ms", port, stopWatch.getTotalTimeMillis());
+            logger.info("started on port:{}", port);
             f.channel().closeFuture().sync();
         } catch (Exception var) {
             logger.error("something error while starting", var);

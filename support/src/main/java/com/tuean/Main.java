@@ -3,6 +3,7 @@ package com.tuean;
 import com.tuean.cache.ResourceCache;
 import com.tuean.entity.Config;
 import com.tuean.file.PropertiesFileReader;
+import com.tuean.helper.StopWatch;
 import com.tuean.server.http.HttpServer;
 import com.tuean.server.http.Router;
 import org.slf4j.Logger;
@@ -30,15 +31,15 @@ public class Main {
         }
         String packageName = "com.tuean";
         logger.info("punch start");
-        ApplicationContext context = new AnnotationConfigApplicationContext(packageName);
         ResourceCache resourceCache = new ResourceCache();
         resourceCache.init();
-        Router router = new Router(packageName, context);
+        Router router = new Router(packageName);
         router.init();
         router.init(resourceCache);
 
         HttpServer httpServer = new HttpServer(config.getPort(), router);
-        httpServer.run(stopWatch);
+        httpServer.run();
+        logger.info("server started, cost: {} ms", stopWatch.getLastTask());
     }
 
 }

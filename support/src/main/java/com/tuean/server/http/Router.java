@@ -3,7 +3,6 @@ package com.tuean.server.http;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tuean.cache.ResourceCache;
 import com.tuean.consts.Const;
@@ -17,13 +16,6 @@ import io.netty.handler.codec.http.*;
 import io.netty.util.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.http.server.PathContainer;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.pattern.PathPatternParser;
-
-import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -50,12 +42,10 @@ public class Router {
     }
     private String packageName;
 
-    private ApplicationContext context;
 
 
-    public Router(String packageName, ApplicationContext context) {
+    public Router(String packageName) {
         this.packageName = packageName;
-        this.context = context;
     }
 
     public void init() {
