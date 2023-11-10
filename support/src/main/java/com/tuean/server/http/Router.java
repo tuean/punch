@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
+import com.tuean.annotation.ApiJson;
 import com.tuean.cache.ResourceCache;
 import com.tuean.consts.Const;
 import com.tuean.consts.ResourceType;
@@ -27,7 +28,7 @@ public class Router {
 
     private static final Logger logger = LoggerFactory.getLogger(Router.class);
 
-    private final Map<RequestMapping, Method> apiMappings = Maps.newConcurrentMap();
+    private final Map<ApiJson, Method> apiMappings = Maps.newConcurrentMap();
 
     private final Map<String, FileContent> fileMappings = Maps.newConcurrentMap();
 
@@ -49,7 +50,7 @@ public class Router {
     }
 
     public void init() {
-        Set<Class<?>> annotatedClasses = findAnnotatedClasses(this.packageName, RestController.class);
+        Set<Class<?>> annotatedClasses = findAnnotatedClasses(this.packageName, ApiJson.class);
         registerRequestMappings(annotatedClasses);
     }
 
@@ -64,11 +65,11 @@ public class Router {
                 Object bean = context.getBean(annotatedClass);
                 Method[] methods = annotatedClass.getMethods();
                 Arrays.stream(methods).forEach(method -> {
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    if (requestMapping == null) return;
-                    String[] paths = requestMapping.value();
-                    apiMappings.put(requestMapping, method);
-                    logger.info("add url mapping: {}", requestMapping.value());
+                    ApiJson apiJson = method.getAnnotation(ApiJson.class);
+                    if (apiJson == null) return;
+                    String path = apiJson.path();
+                    apiMappings.put(apiJson, method);
+                    logger.info("add url mapping: {}", apiJson.path());
                 });
             } catch (BeansException var) {
                 logger.warn("can't find bean of class {}", annotatedClass);
