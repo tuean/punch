@@ -9,7 +9,7 @@ import com.tuean.file.PropertiesFileReader;
 import com.tuean.util.Util;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;

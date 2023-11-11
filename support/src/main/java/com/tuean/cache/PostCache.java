@@ -5,29 +5,19 @@ import com.tuean.file.MarkdownFileReader;
 import com.tuean.file.PropertiesFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ApplicationContextEvent;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
 
-@Component
-public class PostCache implements ApplicationListener<ContextRefreshedEvent> {
+public class PostCache {
 
     private static final Logger logger = LoggerFactory.getLogger(PostCache.class);
 
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
+    public void onApplicationEvent() {
         MarkdownFileReader reader = new MarkdownFileReader();
         setFiles(reader.allMarkdownFiles(PropertiesFileReader.getConfig().getMarkdownPath()));
         logger.info("post cache load complete");
     }
-
 
     private List<MarkdownFile> files;
 

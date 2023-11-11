@@ -5,12 +5,16 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.tuean.annotation.ApiJson;
+import com.tuean.annotation.RequestBody;
+import com.tuean.annotation.RequestHeader;
+import com.tuean.annotation.RequestParam;
 import com.tuean.cache.ResourceCache;
 import com.tuean.consts.Const;
 import com.tuean.consts.ResourceType;
 import com.tuean.entity.FileContent;
 import com.tuean.entity.RequestHolder;
 import com.tuean.exception.DuplicatePathException;
+import com.tuean.helper.context.ProjectContext;
 import com.tuean.util.RequestUtils;
 import com.tuean.util.Util;
 import io.netty.handler.codec.http.*;
@@ -43,6 +47,8 @@ public class Router {
     }
     private String packageName;
 
+    private ProjectContext projectContext;
+
 
 
     public Router(String packageName) {
@@ -62,7 +68,7 @@ public class Router {
         // Print the names of the annotated classes
         for (Class<?> annotatedClass : annotatedClasses) {
             try {
-                Object bean = context.getBean(annotatedClass);
+                Object bean = projectContext.getBeanByClass(annotatedClass);
                 Method[] methods = annotatedClass.getMethods();
                 Arrays.stream(methods).forEach(method -> {
                     ApiJson apiJson = method.getAnnotation(ApiJson.class);
@@ -71,7 +77,7 @@ public class Router {
                     apiMappings.put(apiJson, method);
                     logger.info("add url mapping: {}", apiJson.path());
                 });
-            } catch (BeansException var) {
+            } catch (Exception var) {
                 logger.warn("can't find bean of class {}", annotatedClass);
             }
         }
@@ -88,16 +94,9 @@ public class Router {
     private void checkDuplicateUrl() {
         Set<String> urls = new HashSet<>();
         apiMappings.keySet().forEach(mapping -> {
-            String[] paths = mapping.path();
-            String[] values = mapping.value();
-            Arrays.stream(paths).forEach(n -> {
-                if (urls.contains(n)) throw new DuplicatePathException();
-                urls.add(n);
-            });
-            Arrays.stream(values).forEach(n -> {
-                if (urls.contains(n)) throw new DuplicatePathException();
-                urls.add(n);
-            });
+            String path = mapping.path();
+            if (urls.contains(path)) throw new DuplicatePathException();
+            urls.add(path);
         });
     }
 
@@ -127,26 +126,22 @@ public class Router {
     }
 
     private Method getMethod(HttpMethod httpMethod, String uri) {
-        Iterator<Map.Entry<RequestMapping, Method>> iterator = apiMappings.entrySet().iterator();
+        Iterator<Map.Entry<ApiJson, Method>> iterator = apiMappings.entrySet().iterator();
 
         // Iterate over the Map using the Iterator
         while (iterator.hasNext()) {
-            Map.Entry<RequestMapping, Method> entry = iterator.next();
-            RequestMapping mapping = entry.getKey();
+            Map.Entry<ApiJson, Method> entry = iterator.next();
+            ApiJson mapping = entry.getKey();
             Method method = entry.getValue();
-            String[] paths = mapping.path();
-            Optional<String> result = Arrays.stream(paths).filter(n -> checkIfMatch(uri, n, httpMethod)).findFirst();
-            if (result.isPresent()) return method;
-            String[] values = mapping.value();
-            result = Arrays.stream(values).filter(n -> checkIfMatch(uri, n, httpMethod)).findFirst();
-            if (result.isPresent()) return method;
+            String paths = mapping.path();
+            if (checkIfMatch(uri, paths, httpMethod)) return method;
         }
 
         return null;
     }
 
     private Object getMethodClassBean(Method method) {
-        return context.getBean(method.getDeclaringClass());
+        return ProjectContext.getBeanByClass(method.getDeclaringClass());
     }
 
     private Object[] parseToArgs(DefaultHttpRequest request, HttpContent content, Method method) {
@@ -180,7 +175,8 @@ public class Router {
     }
 
     public static boolean checkIfMatch(String path, String template, HttpMethod method) {
-        return new PathPatternParser().parse(template).matches(PathContainer.parsePath(path));
+//        return new PathPatternParser().parse(template).matches(PathContainer.parsePath(path));
+        return
     }
 
 

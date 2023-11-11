@@ -1,9 +1,6 @@
 package com.tuean.util;
 
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.server.PathContainer;
-import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -119,6 +116,11 @@ public class Util {
         return Files.size(path);
     }
 
+    public static boolean isBlank(String input) {
+        if (input == null) return true;
+        if (input.trim().length() == 0) return true;
+        return false;
+    }
 
 
 

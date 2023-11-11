@@ -27,7 +27,7 @@ public class FileCache {
     public void read() throws IOException {
 //        FileInputStream in = new FileInputStream(this.filePath);
 //        IOUtils.read(in, bytes);
-        long fileSize = Util.fileSize(new File(filePath));
+//        long fileSize = Util.fileSize(filePath);
 
     }
 

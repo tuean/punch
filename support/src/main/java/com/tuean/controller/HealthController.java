@@ -1,16 +1,22 @@
 package com.tuean.controller;
 
+import com.tuean.annotation.ApiJson;
+import com.tuean.annotation.RequestBody;
+import com.tuean.annotation.RequestHeader;
+import com.tuean.annotation.RequestParam;
 import com.tuean.entity.request.TestRequest;
+import com.tuean.helper.context.Ctx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.*;
 
-@RestController
+import static com.tuean.config.enums.HttpMethod.POST;
+
+@Ctx
 public class HealthController {
 
     private static final Logger logger = LoggerFactory.getLogger(HealthController.class);
 
-    @RequestMapping(value = "/health", method = RequestMethod.POST)
+    @ApiJson(path = "/health", method = POST)
     public String health(@RequestParam("a") Integer a, @RequestParam("b") Integer b,
                          @RequestBody TestRequest testRequest,
                          @RequestHeader("token") String token) {
