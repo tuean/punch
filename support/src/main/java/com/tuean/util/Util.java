@@ -97,7 +97,7 @@ public class Util {
         try {
             return Files.probeContentType(file.toPath());
         } catch (Exception var) {
-            log.info("getFileContent error: {}", var.getMessage());
+//            log.info("getFileContent error: {}", var.getMessage());
             return null;
         }
     }

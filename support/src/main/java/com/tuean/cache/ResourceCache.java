@@ -41,7 +41,7 @@ public class ResourceCache {
 
     public void init() {
         String proxyLocation = PropertiesFileReader.getConfig().getSourcePath();
-        log.info("start to load resource file: {}", proxyLocation);
+//        log.info("start to load resource file: {}", proxyLocation);
 
         File files = new File(proxyLocation);
         if (!files.isDirectory() || !files.exists()) throw new RuntimeException("resource file location with wrong config");
@@ -88,7 +88,7 @@ public class ResourceCache {
             Path path = Paths.get(filePath);
             return Files.readAllBytes(path);
         } catch (Exception var) {
-            log.error("load resource file error", var);
+//            log.error("load resource file error", var);
         }
         return null;
     }
