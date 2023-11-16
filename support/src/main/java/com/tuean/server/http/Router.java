@@ -106,7 +106,7 @@ public class Router {
         HttpMethod httpMethod = fullHttpRequest.method();
         String uri = request.uri(), pureUrl = Util.pureUrl(uri);
 
-        if (contentType != null && contentType.contains("application/json")) {
+        if (contentType != null && contentType.startsWith("application/json;")) {
             Method method = getMethod(httpMethod, pureUrl);
 
             if (method == null) return new RequestHolder(ResourceType.json, mapper.writeValueAsBytes(Const.not_found));
@@ -176,7 +176,7 @@ public class Router {
 
     public static boolean checkIfMatch(String path, String template, HttpMethod method) {
 //        return new PathPatternParser().parse(template).matches(PathContainer.parsePath(path));
-        return
+        return path.equals(template);
     }
 
 
