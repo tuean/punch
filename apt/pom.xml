@@ -64,7 +64,10 @@
                 <configuration>
                     <source>21</source>
                     <target>21</target>
-                    <compilerArgument>-proc:none</compilerArgument>
+<!--                    <compilerArgument>-proc:none</compilerArgument>-->
+<!--                    <annotationProcessors>-->
+<!--                        <annotationProcessor>com.tuean.processor.ApiJsonAptProcessor</annotationProcessor>-->
+<!--                    </annotationProcessors>-->
                 </configuration>
             </plugin>
 

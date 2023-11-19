@@ -21,9 +21,9 @@ import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@AutoService(ApiJsonAptProcessor.class)
+//@AutoService(ApiJsonAptProcessor.class)
 @SupportedAnnotationTypes("com.tuean.annotation.ApiJson")
-@SupportedSourceVersion(SourceVersion.RELEASE_17)
+@SupportedSourceVersion(SourceVersion.RELEASE_19)
 public class ApiJsonAptProcessor extends AbstractProcessor {
 
     private static Logger logger = LoggerFactory.getLogger(ApiJsonAptProcessor.class);
@@ -50,6 +50,8 @@ public class ApiJsonAptProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         System.out.println("11");
+//        https://www.cnblogs.com/throwable/p/9139908.html
+        messager.printMessage(Diagnostic.Kind.NOTE, "111");
         for (TypeElement typeElement : annotations) {
             try {
 //                parseElement(typeElement);
