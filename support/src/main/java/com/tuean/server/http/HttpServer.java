@@ -53,7 +53,7 @@ public class HttpServer {
 
             ChannelFuture f = b.bind(port).sync();
             logger.info("started on port:{}", port);
-            f.channel().closeFuture().sync();
+//            f.channel().closeFuture().sync();
         } catch (Exception var) {
             logger.error("something error while starting", var);
             workerGroup.shutdownGracefully();

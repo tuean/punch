@@ -20,6 +20,10 @@ public class ProjectContext {
     private static Map<Class, Bean> beanMap = new ConcurrentHashMap<>();
 
 
+    public ProjectContext(String packageName) {
+        init(packageName);
+    }
+
     public void init(String packageName) {
         Set<Class<?>> annotatedClasses = findAnnotatedClasses(packageName, Ctx.class);
         annotatedClasses.parallelStream().forEach(this::createBean);
@@ -36,6 +40,7 @@ public class ProjectContext {
             Bean bean = new Bean(beanName, clazz, o);
             ctxMap.put(beanName, bean);
             beanMap.put(clazz, bean);
+            logger.info("registered ctx bean :{}", beanName);
         } catch (Exception var) {
             logger.error("create bean error " + beanName, var);
             throw new RuntimeException();

@@ -1,9 +1,6 @@
 package com.tuean.controller;
 
-import com.tuean.annotation.ApiJson;
-import com.tuean.annotation.RequestBody;
-import com.tuean.annotation.RequestHeader;
-import com.tuean.annotation.RequestParam;
+import com.tuean.annotation.*;
 import com.tuean.entity.request.TestRequest;
 import com.tuean.helper.context.Ctx;
 import org.slf4j.Logger;
@@ -13,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import static com.tuean.config.enums.HttpMethod.POST;
 
 @Ctx
+@Api
 public class HealthController {
 
     private static final Logger logger = LoggerFactory.getLogger(HealthController.class);

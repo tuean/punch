@@ -1,5 +1,6 @@
 package com.tuean.controller;
 
+import com.tuean.annotation.Api;
 import com.tuean.annotation.ApiJson;
 import com.tuean.annotation.RequestParam;
 import com.tuean.cache.PostCache;
@@ -9,6 +10,8 @@ import com.tuean.helper.context.Ctx;
 
 import java.util.List;
 
+@Ctx
+@Api
 public class PostController {
 
     @Ctx
