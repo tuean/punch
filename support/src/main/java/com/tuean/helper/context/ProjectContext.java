@@ -48,14 +48,14 @@ public class ProjectContext {
     }
 
 
-    public static Object getBeanByName(String name) {
-        Object bean = ctxMap.get(name);
+    public static Bean getBeanByName(String name) {
+        Bean bean = ctxMap.get(name);
         if (bean == null) throw new NullPointerException();
         return bean;
     }
 
-    public static Object getBeanByClass(Class clazz) {
-        Object bean = beanMap.get(clazz);
+    public static Bean getBeanByClass(Class clazz) {
+        Bean bean = beanMap.get(clazz);
         if (bean == null) throw new NullPointerException();
         return bean;
     }

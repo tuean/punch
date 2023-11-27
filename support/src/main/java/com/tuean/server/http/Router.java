@@ -11,6 +11,7 @@ import com.tuean.consts.ResourceType;
 import com.tuean.entity.FileContent;
 import com.tuean.entity.RequestHolder;
 import com.tuean.exception.DuplicatePathException;
+import com.tuean.helper.context.Bean;
 import com.tuean.helper.context.ProjectContext;
 import com.tuean.util.RequestUtils;
 import com.tuean.util.Util;
@@ -66,7 +67,7 @@ public class Router {
         // Print the names of the annotated classes
         for (Class<?> annotatedClass : annotatedClasses) {
             try {
-                Object bean = projectContext.getBeanByClass(annotatedClass);
+                Bean bean = projectContext.getBeanByClass(annotatedClass);
                 Method[] methods = annotatedClass.getMethods();
                 Arrays.stream(methods).forEach(method -> {
                     ApiJson apiJson = method.getAnnotation(ApiJson.class);
@@ -104,24 +105,39 @@ public class Router {
         HttpMethod httpMethod = fullHttpRequest.method();
         String uri = request.uri(), pureUrl = Util.pureUrl(uri);
 
-        if (contentType != null && contentType.startsWith("application/json;")) {
-            Method method = getMethod(httpMethod, pureUrl);
+        Set<ApiJson> apiJsonKeySet = apiMappings.keySet();
+        ApiJson matched = null;
+        for (ApiJson apiJson : apiJsonKeySet) {
+            boolean sameMethod = httpMethod.name().toLowerCase().equals(apiJson.method().name().toLowerCase());
+            if (sameMethod) {
+                matched = apiJson;
+                break;
+            }
+        }
+        boolean isJsonApi = matched != null;// contentType != null && contentType.startsWith("application/json;");
+        boolean isFile = fileMappings.get(pureUrl) != null && httpMethod.equals(HttpMethod.GET);
 
+        if (isJsonApi) {
+            Method method = getMethod(httpMethod, pureUrl);
             if (method == null) return new RequestHolder(ResourceType.json, mapper.writeValueAsBytes(Const.not_found));
 
             Object[] args = parseToArgs(fullHttpRequest, content, method);
-            Object methodBean = getMethodClassBean(method);
-            Object result = method.invoke(methodBean, args);
+            Bean methodBean = getMethodClassBean(method);
+            Object result = method.invoke(methodBean.getInstance(), args);
             return result == null ? null : new RequestHolder(ResourceType.json, mapper.writeValueAsBytes(result));
-        } else if (httpMethod.equals(HttpMethod.GET)) {
+        } else if (isFile) {
             if (StringUtil.isNullOrEmpty(pureUrl) || "/".equals(pureUrl)) pureUrl = "/index.html";
             FileContent fileContent = fileMappings.get(pureUrl);
-            if (fileContent == null) new RequestHolder(ResourceType.json, mapper.writeValueAsBytes(Const.not_found));
-            return new RequestHolder(fileContent.getResourceType(), fileContent.getBytes());
+            if (fileContent != null) {
+                return new RequestHolder(fileContent.getResourceType(), fileContent.getBytes());
+            }
+
+            return new RequestHolder(ResourceType.json, mapper.writeValueAsBytes(Const.not_found));
         }
 
         return new RequestHolder(ResourceType.json, mapper.writeValueAsBytes(Const.not_found));
     }
+
 
     private Method getMethod(HttpMethod httpMethod, String uri) {
         Iterator<Map.Entry<ApiJson, Method>> iterator = apiMappings.entrySet().iterator();
@@ -138,7 +154,7 @@ public class Router {
         return null;
     }
 
-    private Object getMethodClassBean(Method method) {
+    private Bean getMethodClassBean(Method method) {
         return ProjectContext.getBeanByClass(method.getDeclaringClass());
     }
 
