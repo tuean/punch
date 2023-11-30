@@ -1,6 +1,7 @@
 package com.tuean.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tuean.annotation.ApiJson;
 import com.tuean.exception.BadRequestException;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.*;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class RequestUtils {
 
@@ -95,6 +97,19 @@ public class RequestUtils {
             logger.warn("fail to convert http content", var);
             throw new BadRequestException();
         }
+    }
+
+    public static ApiJson getMathedApiJson(Set<ApiJson> apiJsonKeySet, HttpMethod httpMethod, String pureUrl) {
+        ApiJson matched = null;
+        for (ApiJson apiJson : apiJsonKeySet) {
+            boolean sameMethod = httpMethod.name().toLowerCase().equals(apiJson.method().name().toLowerCase());
+            boolean sameUrl = apiJson.path().trim().equals(pureUrl);
+            if (sameMethod && sameUrl) {
+                matched = apiJson;
+                break;
+            }
+        }
+        return matched;
     }
 
 }

@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import static com.tuean.util.ReflectionUtil.findAnnotatedClasses;
+import static com.tuean.util.RequestUtils.getMathedApiJson;
 
 
 public class Router {
@@ -104,17 +105,9 @@ public class Router {
         String contentType = request.headers().get(HttpHeaderNames.CONTENT_TYPE);
         HttpMethod httpMethod = fullHttpRequest.method();
         String uri = request.uri(), pureUrl = Util.pureUrl(uri);
+        ApiJson matched = getMathedApiJson(apiMappings.keySet(), httpMethod, pureUrl);
 
-        Set<ApiJson> apiJsonKeySet = apiMappings.keySet();
-        ApiJson matched = null;
-        for (ApiJson apiJson : apiJsonKeySet) {
-            boolean sameMethod = httpMethod.name().toLowerCase().equals(apiJson.method().name().toLowerCase());
-            if (sameMethod) {
-                matched = apiJson;
-                break;
-            }
-        }
-        boolean isJsonApi = matched != null;// contentType != null && contentType.startsWith("application/json;");
+        boolean isJsonApi = matched != null && contentType != null && contentType.startsWith("application/json;");
         boolean isFile = fileMappings.get(pureUrl) != null && httpMethod.equals(HttpMethod.GET);
 
         if (isJsonApi) {
