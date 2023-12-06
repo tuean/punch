@@ -14,10 +14,14 @@
         {{latest_post}}
       </h2>
     </div>
+    <ul>
+
+    </ul>
   </div>
 </template>
 
 <script setup>
+import PostItem from "./PostItem.vue";
 import config from "../config"
 
 const welcome = config.welcome;
