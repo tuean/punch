@@ -4,11 +4,19 @@ import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineImpl;
 import com.tuean.annotation.Value;
+import com.tuean.config.Environment;
+import com.tuean.entity.MarkdownFile;
+import com.tuean.util.Util;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class WebdavClient {
 
@@ -23,15 +31,43 @@ public class WebdavClient {
     @Value("webdav.url")
     private String webdavUrl;
 
-    private Sardine sardine;
+    private Sardine sardine = null;
 
     public void init() {
-        sardine = new SardineImpl("tuean_z@163.com", "abng36e4w594gn8v");
+        sardine = new SardineImpl(Environment.getProperty("webdav.account"), Environment.getProperty("webdav.password"));
     }
 
     public List<DavResource> list() throws IOException {
-        List<DavResource> list = sardine.list("https://dav.jianguoyun.com/dav/");
+        if (sardine == null) init();
+        List<DavResource> list = sardine.list(Environment.getProperty("webdav.url"));
         logger.info("webdav get list: {}", list);
         return list;
     }
+
+    public List<MarkdownFile> loadFiles() throws IOException {
+        return list().stream()
+                .parallel()
+                .map(this::loadAndParseDavFile)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    public MarkdownFile loadAndParseDavFile(DavResource davResource) {
+        try {
+            InputStream in = sardine.get(davResource.getPath());
+            String content = IOUtils.toString(in, StandardCharsets.UTF_8);
+            String fileName = davResource.getName();
+            String fileId = Util.transferFileId(fileName);
+            Long lastModified = davResource.getModified().getTime();
+            return new MarkdownFile(fileId, fileName, 0, content, null, lastModified);
+        } catch (IOException e) {
+            logger.info("get webdav file error:{}", davResource.getPath());
+            logger.error("", e);
+        }
+        return null;
+    }
+
+
+
+
 }

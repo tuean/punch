@@ -1,5 +1,6 @@
 package com.tuean.file;
 
+import com.tuean.config.Environment;
 import com.tuean.entity.Config;
 
 import java.io.FileInputStream;
@@ -13,19 +14,20 @@ public class PropertiesFileReader {
 
     private static Config config;
 
+
+
     public static Config readProperties() {
-        Properties prop = new Properties();
         String fileName = "application.properties";
 
         try (InputStream input = PropertiesFileReader.class.getClassLoader().getResourceAsStream(fileName)) {
             // Load properties file
-            prop.load(input);
+            Environment.properties.load(input);
 
-            String serverPort = prop.getProperty("server.port");
+            String serverPort = Environment.properties.getProperty("server.port");
             Integer port = Integer.parseInt(serverPort == null ? "8888" : serverPort);
-            String markdownPath = prop.getProperty("markdown.path");
-            String author = prop.getProperty("author");
-            String source = prop.getProperty("file.proxy.location");
+            String markdownPath = Environment.properties.getProperty("markdown.path");
+            String author = Environment.properties.getProperty("author");
+            String source = Environment.properties.getProperty("file.proxy.location");
             config = new Config(port, markdownPath, author, source);
             return config;
         } catch (IOException ex) {

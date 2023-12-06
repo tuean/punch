@@ -118,11 +118,14 @@ public class Router {
             Bean methodBean = getMethodClassBean(method);
             Object result = method.invoke(methodBean.getInstance(), args);
             return result == null ? null : new RequestHolder(ResourceType.json, mapper.writeValueAsBytes(result));
-        } else if (isFile) {
+        } else if (true) {
             if (StringUtil.isNullOrEmpty(pureUrl) || "/".equals(pureUrl)) pureUrl = "/index.html";
             FileContent fileContent = fileMappings.get(pureUrl);
             if (fileContent != null) {
                 return new RequestHolder(fileContent.getResourceType(), fileContent.getBytes());
+            } else {
+//                fileContent = fileMappings.get("/index.html");
+//                return new RequestHolder(fileContent.getResourceType(), fileContent.getBytes());
             }
 
             return new RequestHolder(ResourceType.json, mapper.writeValueAsBytes(Const.not_found));
