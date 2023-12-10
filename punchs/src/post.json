@@ -10,5 +10,23 @@
                 "apollo", "后端"
             ]
         }
+    ],
+    "tags": [
+        {
+            "tag": "apollo",
+            "no": 1
+        }
+    ],
+    "posts": [
+        {
+            "name": "apollo重复key",
+            "author": "tuean",
+            "publish_date": "2023-10-10",
+            "title": "apollo重复key",
+            "description": "app出现重复key的处理办法",
+            "tags": [
+                "apollo", "后端"
+            ]
+        }
     ]
 }

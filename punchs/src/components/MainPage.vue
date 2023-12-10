@@ -15,16 +15,19 @@
       </h2>
     </div>
     <ul>
-
+      <PostItem v-for="post in recommend_posts" :post="post"></PostItem>
     </ul>
   </div>
 </template>
 
 <script setup>
+import { inject } from "vue";
 import PostItem from "./PostItem.vue";
 import config from "../config"
 
+const postjson = inject("global_context").value
 const welcome = config.welcome;
 const welcome_sub = config.welcome_sub;
 const latest_post = config.latest_post;
+const recommend_posts = postjson.recommend;
 </script>

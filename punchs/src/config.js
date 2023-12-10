@@ -26,4 +26,6 @@ export default {
         author: "© 2023 tuean"
     },
     post_resource: "http://localhost:5173/src/post.json",
+    link_text: "Read more ->",
+    blog_search_left: "所有文章"
 }

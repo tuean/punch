@@ -19,8 +19,16 @@
                   <a :href="post_path" class="text-gray-900 dark:text-gray-100">{{post.name}}</a>
                 </h2>
                 <div class="flex flex-wrap">
-
+                  <a v-for="tag in post.tags" :href="tag_link(tag)" class="mr-3 font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 text-sm">
+                    {{tag}}
+                  </a>
                 </div>
+              </div>
+
+              <div class="text-base font-medium leading-6">
+                <a :href="post_path" class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
+                    {{config.link_text}}
+                </a>
               </div>
             </div>
           </div>
@@ -31,11 +39,15 @@
 
 <script setup>
 import { toRefs, defineProps } from 'vue';
+import config from './../config';
 
 const props = defineProps({
   post: Object
 })
 
-const post = toRefs(props)
+const post = props.post
 const post_path = "/blog/" + post.name
+const tag_link = (tag) => {
+  return "/tags/" + tag
+}
 </script>
