@@ -7,6 +7,7 @@ import com.tuean.annotation.Value;
 import com.tuean.config.Environment;
 import com.tuean.entity.MarkdownFile;
 import com.tuean.util.Util;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -31,6 +33,7 @@ public class WebdavClient {
     @Value("webdav.url")
     private String webdavUrl;
 
+    private List<MarkdownFile> temp = new ArrayList<>(1024);
     private Sardine sardine = null;
 
     public void init() {
@@ -67,6 +70,14 @@ public class WebdavClient {
         return null;
     }
 
+
+    public void generateJsonFile() throws IOException {
+        if (CollectionUtils.isEmpty(temp)) {
+            temp = loadFiles();
+        }
+        int size = Integer.parseInt(Environment.getProperty("blog.post.recommend.size"));
+
+    }
 
 
 

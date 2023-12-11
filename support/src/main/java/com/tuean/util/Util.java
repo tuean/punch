@@ -1,5 +1,7 @@
 package com.tuean.util;
 
+import com.tuean.entity.MarkdownFile;
+import com.tuean.entity.blog.Post;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -120,6 +122,10 @@ public class Util {
         if (input == null) return true;
         if (input.trim().length() == 0) return true;
         return false;
+    }
+
+    public Post convertFile2Post(MarkdownFile file) {
+
     }
 
 
