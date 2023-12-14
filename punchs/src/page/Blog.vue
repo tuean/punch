@@ -10,7 +10,7 @@
           </div>
           <div class="pl-4 border-l-2">
             <div class="relative mb-2">
-              <input id="search" name="search" aria-label="Search posts" type="text" placeholder="Search posts"
+              <input id="search" name="search" v-model="searchQuery" aria-label="Search posts" type="text" placeholder="Search posts"
                      class="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-900 dark:bg-gray-800 dark:text-gray-100">
               <svg @click="search" class="absolute right-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-300"
                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -38,7 +38,7 @@
       </div>
 
       <ul>
-        <PostItem v-for="post in p" :post="post"/>
+        <PostItem v-for="post in filteredPosts" :key="post.name" :post="post"/>
       </ul>
     </div>
   </div>
@@ -50,7 +50,7 @@
 import PostItem from "../components/PostItem.vue"
 // import PostJson from "../post.json"
 import config from "../config"
-import {inject, ref} from "vue";
+import {computed, inject, ref, watch} from "vue";
 
 const postjson = inject("global_context").value
 const posts = postjson.posts
@@ -59,12 +59,19 @@ const p = ref(posts.slice())
 
 const tag_link = tag_name => "/tags/" + tag_name
 
-const filter = (post, key) => {
-  return post.name.includes(key)
+const searchQuery = ref("")
+const search = () => {
+
 }
 
-const search = key => {
-  p.value = posts.filter(filter)
-}
+const filteredPosts = computed(() => {
+  return p.value.filter((post) =>
+      post.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
+
+watch(searchQuery, (newValue) => {
+  console.log('搜索内容变化：', newValue);
+});
 
 </script>

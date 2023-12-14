@@ -19,6 +19,9 @@ public class Post {
 
     private List<String> paths;
 
+    public Post() {
+    }
+
     public Post(String name, String author, String publishDate, String title, String description, Set<String> tags, List<String> paths) {
         this.name = name;
         this.author = author;

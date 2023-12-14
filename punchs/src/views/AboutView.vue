@@ -1,15 +1,11 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
-</template>
+  <article class="flex items-center">
+    <div>this website is wrote by vue3.</div>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
+    <div>and the css of website is fork by
+      <a class="cursor-pointer text-blue-500" href="https://github.com/akiarostami/sveltekit-tailwind-blog-starter">
+        sveltekit-tailwind-blog-starter
+      </a>
+    </div>
+  </article>
+</template>

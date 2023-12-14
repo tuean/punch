@@ -39,7 +39,8 @@ public class ResourceCache {
                 }
             });
 
-    public void init() {
+
+    public ResourceCache() {
         String proxyLocation = PropertiesFileReader.getConfig().getSourcePath();
 //        log.info("start to load resource file: {}", proxyLocation);
 

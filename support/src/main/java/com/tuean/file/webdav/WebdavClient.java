@@ -36,6 +36,14 @@ public class WebdavClient {
     private List<MarkdownFile> temp = new ArrayList<>(1024);
     private Sardine sardine = null;
 
+    public WebdavClient() {
+        synchronized (sardine) {
+            if (sardine == null) {
+                init();
+            }
+        }
+    }
+
     public void init() {
         sardine = new SardineImpl(Environment.getProperty("webdav.account"), Environment.getProperty("webdav.password"));
     }

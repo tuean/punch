@@ -124,8 +124,12 @@ public class Util {
         return false;
     }
 
-    public Post convertFile2Post(MarkdownFile file) {
+    public static Post convertFile2Post(MarkdownFile file) {
+        Post post = new Post();
+        post.setAuthor(file.getAuthor());
+        post.setDescription(""); // TODO: 2023/12/12
 
+        return post;
     }
 
 
