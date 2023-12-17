@@ -6,6 +6,7 @@ import com.github.sardine.impl.SardineImpl;
 import com.tuean.annotation.Value;
 import com.tuean.config.Environment;
 import com.tuean.entity.MarkdownFile;
+import com.tuean.entity.blog.Post;
 import com.tuean.util.Util;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -34,13 +35,11 @@ public class WebdavClient {
     private String webdavUrl;
 
     private List<MarkdownFile> temp = new ArrayList<>(1024);
-    private Sardine sardine = null;
+    private Sardine sardine;
 
     public WebdavClient() {
-        synchronized (sardine) {
-            if (sardine == null) {
-                init();
-            }
+        if (sardine == null) {
+            init();
         }
     }
 
@@ -48,16 +47,25 @@ public class WebdavClient {
         sardine = new SardineImpl(Environment.getProperty("webdav.account"), Environment.getProperty("webdav.password"));
     }
 
+    public void doRefresh() throws IOException {
+        List<MarkdownFile> mds = loadFiles();
+
+    }
+
     public List<DavResource> list() throws IOException {
         if (sardine == null) init();
-        List<DavResource> list = sardine.list(Environment.getProperty("webdav.url"));
+        String url = Environment.getProperty("webdav.domain") + Environment.getProperty("webdav.url");
+        List<DavResource> list = sardine.list(url);
         logger.info("webdav get list: {}", list);
         return list;
     }
 
+
+
     public List<MarkdownFile> loadFiles() throws IOException {
         return list().stream()
                 .parallel()
+                .filter(file -> !Objects.equals(file.getPath(), Environment.getProperty("webdav.url")))
                 .map(this::loadAndParseDavFile)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -65,7 +73,10 @@ public class WebdavClient {
 
     public MarkdownFile loadAndParseDavFile(DavResource davResource) {
         try {
-            InputStream in = sardine.get(davResource.getPath());
+            String domain = Environment.getProperty("webdav.domain");
+            String path = domain + davResource.getPath();
+            InputStream in = sardine.get(path);
+            logger.info("start to load:{}", path);
             String content = IOUtils.toString(in, StandardCharsets.UTF_8);
             String fileName = davResource.getName();
             String fileId = Util.transferFileId(fileName);
@@ -79,13 +90,7 @@ public class WebdavClient {
     }
 
 
-    public void generateJsonFile() throws IOException {
-        if (CollectionUtils.isEmpty(temp)) {
-            temp = loadFiles();
-        }
-        int size = Integer.parseInt(Environment.getProperty("blog.post.recommend.size"));
 
-    }
 
 
 

@@ -7,13 +7,14 @@ export default {
         }, {
             title: "blog",
             path: "/blog"
-        },{
-            title: "resume",
-            path: "/resume"
-        },{
-            title: "about",
-            path: "/about"
-        }
+        },
+        // {
+        //     title: "resume",
+        //     path: "/resume"
+        // },{
+        //     title: "about",
+        //     path: "/about"
+        // }
     ],
     welcome: "欢迎来到tuean的博客空间",
     welcome_sub: "本站主要记录工作生活中值得纪念的一些总结。",

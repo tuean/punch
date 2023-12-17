@@ -3,6 +3,7 @@ package com.tuean.util;
 import com.tuean.entity.MarkdownFile;
 import com.tuean.entity.blog.Post;
 import lombok.extern.slf4j.Slf4j;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +11,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
@@ -124,12 +128,55 @@ public class Util {
         return false;
     }
 
+    /**
+     *
+     * ---
+     * title: HttpMessageConverter
+     * date: "2021-05-20"
+     * tags:
+     *   - spring
+     * image: https://i.loli.net/2021/05/20/FpWJ9MoRzDeKr7N.jpg
+     * author: tuean
+     * summary: "spring中http消息体转化工具"
+     * ---
+     *
+     * @param file
+     * @return
+     */
     public static Post convertFile2Post(MarkdownFile file) {
-        Post post = new Post();
-        post.setAuthor(file.getAuthor());
-        post.setDescription(""); // TODO: 2023/12/12
+        String[] contents = file.getContent().split("\r\n");
+        int start = 0;
+        StringBuilder sb = new StringBuilder();
+        for (String line : contents) {
+            if (line.startsWith("---")) {
+                start++; continue;
+            }
+            if (start > 1) break;
+            sb.append(line); sb.append("\r\n");
+        }
 
+        Yaml yaml = new Yaml();
+        Map<String, Object> properties = yaml.load(sb.toString().replace("\\t(TAB)", ""));
+        if (properties == null) properties = new HashMap<>();
+
+        Post post = new Post();
+        post.setAuthor(obj2Str(properties.getOrDefault("author", file.getAuthor())));
+        post.setDescription(obj2Str(properties.getOrDefault("summary", "")));
+        post.setName(obj2Str(properties.getOrDefault("title", file.getFileName())));
+        post.setTags((List) properties.getOrDefault("tags", new ArrayList<>()));
+        post.setPublishDate(obj2Str(properties.getOrDefault("date", unix2String(file.getLastModified()))));
         return post;
+    }
+
+    public static String unix2String(Long unixTime) {
+        if (unixTime == null) return "";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // 使用格式器将 Unix 时间戳转换为字符串
+        return Instant.ofEpochMilli(unixTime).atZone(ZoneId.systemDefault()).format(formatter);
+    }
+
+    public static String obj2Str(Object c) {
+        return c == null ? "" : String.valueOf(c);
     }
 
 

@@ -15,14 +15,14 @@ public class Post {
 
     private String description;
 
-    private Set<String> tags;
+    private List<String> tags;
 
     private List<String> paths;
 
     public Post() {
     }
 
-    public Post(String name, String author, String publishDate, String title, String description, Set<String> tags, List<String> paths) {
+    public Post(String name, String author, String publishDate, String title, String description, List<String> tags, List<String> paths) {
         this.name = name;
         this.author = author;
         this.publishDate = publishDate;
@@ -72,11 +72,11 @@ public class Post {
         this.description = description;
     }
 
-    public Set<String> getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(Set<String> tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -36,8 +37,7 @@ public class Main {
         }
         logger.info("punch start");
         WebdavClient client = new WebdavClient();
-        List<MarkdownFile> mds = client.loadFiles();
-        List<Post> posts = mds.stream().map(Util::convertFile2Post).toList();
+
 
         Router router = new Router("com.tuean");
         ResourceCache resourceCache = new ResourceCache();
