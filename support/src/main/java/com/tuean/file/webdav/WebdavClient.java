@@ -6,7 +6,9 @@ import com.github.sardine.impl.SardineImpl;
 import com.tuean.annotation.Value;
 import com.tuean.config.Environment;
 import com.tuean.entity.MarkdownFile;
+import com.tuean.entity.blog.Context;
 import com.tuean.entity.blog.Post;
+import com.tuean.helper.file.FileGenerator;
 import com.tuean.util.Util;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -49,7 +51,7 @@ public class WebdavClient {
 
     public void doRefresh() throws IOException {
         List<MarkdownFile> mds = loadFiles();
-
+        Context context = FileGenerator.generate(mds);
     }
 
     public List<DavResource> list() throws IOException {
