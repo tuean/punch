@@ -84,6 +84,10 @@ public class ResourceCache {
         fileCache.put(path, fileContent);
     }
 
+    public void storeWithPath(List<String> prefixList, byte[] bytes) {
+        
+    }
+
     private byte[] loadFileContents(String filePath) {
         try {
             Path path = Paths.get(filePath);

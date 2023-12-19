@@ -36,8 +36,6 @@ public class Main {
             return;
         }
         logger.info("punch start");
-        WebdavClient client = new WebdavClient();
-
 
         Router router = new Router("com.tuean");
         ResourceCache resourceCache = new ResourceCache();
@@ -45,7 +43,7 @@ public class Main {
         router.init();
         router.init(resourceCache);
 
-
+        WebdavClient client = new WebdavClient(resourceCache);
 
 
         HttpServer httpServer = new HttpServer(config.getPort(), router);

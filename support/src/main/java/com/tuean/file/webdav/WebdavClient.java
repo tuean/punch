@@ -4,6 +4,7 @@ import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineImpl;
 import com.tuean.annotation.Value;
+import com.tuean.cache.ResourceCache;
 import com.tuean.config.Environment;
 import com.tuean.entity.MarkdownFile;
 import com.tuean.entity.blog.Context;
@@ -36,13 +37,16 @@ public class WebdavClient {
     @Value("webdav.url")
     private String webdavUrl;
 
+    private ResourceCache resourceCache;
+
     private List<MarkdownFile> temp = new ArrayList<>(1024);
     private Sardine sardine;
 
-    public WebdavClient() {
+    public WebdavClient(ResourceCache resourceCache) {
         if (sardine == null) {
             init();
         }
+        this.resourceCache = resourceCache;
     }
 
     public void init() {
