@@ -7,16 +7,16 @@ import java.util.List;
 
 public class Context {
 
-    private List<Post> recommend;
+    private List<PostItem> recommend;
 
-    private List<Post> posts;
+    private List<PostItem> postItems;
 
     private List<Tag> tags;
 
 
-    public Context(List<Post> recommend, List<Post> posts, List<Tag> tags) {
+    public Context(List<PostItem> recommend, List<PostItem> postItems, List<Tag> tags) {
         this.recommend = recommend;
-        this.posts = posts;
+        this.postItems = postItems;
         this.tags = tags;
     }
 
@@ -31,20 +31,20 @@ public class Context {
         }
     }
 
-    public List<Post> getRecommend() {
+    public List<PostItem> getRecommend() {
         return recommend;
     }
 
-    public void setRecommend(List<Post> recommend) {
+    public void setRecommend(List<PostItem> recommend) {
         this.recommend = recommend;
     }
 
-    public List<Post> getPosts() {
-        return posts;
+    public List<PostItem> getPosts() {
+        return postItems;
     }
 
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
+    public void setPosts(List<PostItem> postItems) {
+        this.postItems = postItems;
     }
 
     public List<Tag> getTags() {

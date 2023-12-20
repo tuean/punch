@@ -10,7 +10,7 @@
           </div>
           <div class="pl-4 border-l-2">
             <div class="relative mb-2">
-              <input id="search" name="search" v-model="searchQuery" aria-label="Search posts" type="text" placeholder="Search posts"
+              <input id="search" name="search" v-model="searchQuery" aria-label="Search postItems" type="text" placeholder="Search postItems"
                      class="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-900 dark:bg-gray-800 dark:text-gray-100">
               <svg @click="search" class="absolute right-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-300"
                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -38,7 +38,7 @@
       </div>
 
       <ul>
-        <PostItem v-for="post in filteredPosts" :key="post.name" :post="post"/>
+        <PostItem v-for="postItem in filteredPosts" :key="postItem.name" :postItem="postItem"/>
       </ul>
     </div>
   </div>
@@ -48,14 +48,14 @@
 
 <script setup>
 import PostItem from "../components/PostItem.vue"
-// import PostJson from "../post.json"
+// import PostJson from "../postItem.json"
 import config from "../config"
 import {computed, inject, ref, watch} from "vue";
 
 const postjson = inject("global_context").value
-const posts = postjson.posts
+const postItems = postjson.postItems
 const tags = postjson.tags
-const p = ref(posts.slice())
+const p = ref(postItems.slice())
 
 const tag_link = tag_name => "/tags/" + tag_name
 
@@ -65,8 +65,8 @@ const search = () => {
 }
 
 const filteredPosts = computed(() => {
-  return p.value.filter((post) =>
-      post.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  return p.value.filter((postItem) =>
+      postItem.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
 

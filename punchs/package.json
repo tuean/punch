@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "markdown-it": "^14.0.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineImpl;
-import com.tuean.annotation.Value;
 import com.tuean.cache.ResourceCache;
 import com.tuean.config.Environment;
 import com.tuean.consts.ResourceType;
@@ -13,10 +12,10 @@ import com.tuean.entity.blog.Context;
 import com.tuean.entity.blog.Post;
 import com.tuean.helper.file.FileGenerator;
 import com.tuean.util.Util;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.error.Mark;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,10 +57,19 @@ public class WebdavClient {
 
     public void refreshPostJson() throws IOException {
         List<MarkdownFile> mds = loadFiles();
+
+        // union info
         Context context = FileGenerator.generate(mds);
         ObjectMapper mapper = new ObjectMapper();
         byte[] content = mapper.writeValueAsBytes(context);
         resourceCache.storeWithPath(Collections.emptyList(), content, "utf8", "post.json", ResourceType.json);
+
+        // single markdown file
+        for (MarkdownFile md : mds) {
+            Post post = Util.convertFile2Post(md);
+            byte[] content_2 = mapper.writeValueAsBytes(post);
+            resourceCache.storeWithPath(Collections.emptyList(), content_2, "utf8", post.getTitle(), ResourceType.json);
+        }
     }
 
     public List<DavResource> list() throws IOException {

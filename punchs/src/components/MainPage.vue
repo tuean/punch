@@ -15,7 +15,7 @@
       </h2>
     </div>
     <ul>
-      <PostItem v-for="post in recommend_posts" :post="post"></PostItem>
+      <PostItem v-for="postItem in recommend_posts" :postItem="postItem"></PostItem>
     </ul>
   </div>
 </template>

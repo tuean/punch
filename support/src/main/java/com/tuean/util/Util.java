@@ -2,19 +2,18 @@ package com.tuean.util;
 
 import com.tuean.entity.MarkdownFile;
 import com.tuean.entity.blog.Post;
+import com.tuean.entity.blog.PostItem;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.swing.text.DateFormatter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -135,6 +134,13 @@ public class Util {
         return false;
     }
 
+    public static Post convertFile2Post(MarkdownFile file) {
+        Map<String, Object> properties = getStringObjectMap(file);
+        String title = obj2Str(properties.getOrDefault("title", file.getFileName()));
+        String content = ""; // todo
+        return new Post(title, content);
+    }
+
     /**
      *
      * ---
@@ -150,15 +156,15 @@ public class Util {
      * @param file
      * @return
      */
-    public static Post convertFile2Post(MarkdownFile file) {
+    public static PostItem convertFile2PostItem(MarkdownFile file) {
         Map<String, Object> properties = getStringObjectMap(file);
 
-        Post post = new Post();
-        post.setAuthor(obj2Str(properties.getOrDefault("author", file.getAuthor())));
-        post.setDescription(obj2Str(properties.getOrDefault("summary", "")));
-        post.setTitle(obj2Str(properties.getOrDefault("title", file.getFileName())));
-        post.setName(file.getFileName());
-        post.setTags((List) properties.getOrDefault("tags", new ArrayList<>()));
+        PostItem postItem = new PostItem();
+        postItem.setAuthor(obj2Str(properties.getOrDefault("author", file.getAuthor())));
+        postItem.setDescription(obj2Str(properties.getOrDefault("summary", "")));
+        postItem.setTitle(obj2Str(properties.getOrDefault("title", file.getFileName())));
+        postItem.setName(file.getFileName());
+        postItem.setTags((List) properties.getOrDefault("tags", new ArrayList<>()));
         String dateStr = null;
 //        if (date instanceof Date) dateStr = Util.date2String(date);
         switch (properties.get("date")) {
@@ -166,8 +172,8 @@ public class Util {
             case String s -> dateStr = s;
             default -> dateStr = "";
         };
-        post.setPublishDate(StringUtil.isNullOrEmpty(dateStr) ? unix2String(file.getLastModified()) : dateStr);
-        return post;
+        postItem.setPublishDate(StringUtil.isNullOrEmpty(dateStr) ? unix2String(file.getLastModified()) : dateStr);
+        return postItem;
     }
 
     private static Map<String, Object> getStringObjectMap(MarkdownFile file) {

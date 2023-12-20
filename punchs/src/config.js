@@ -1,5 +1,6 @@
 export default {
     title: "Tuean's blog",
+    avatar: "",
     links: [
         {
            title: "home",
