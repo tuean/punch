@@ -69,12 +69,7 @@ public class ResourceCache {
 
     private void storeWithPath(List<String> prefixList, File file) {
         prefixList = prefixList.stream().filter(n -> !StringUtil.isNullOrEmpty(n)).toList();
-        String path = null;
-        if (CollectionUtils.isEmpty(prefixList)) {
-            path = String.join(URL_PATH_STR, prefixList) + URL_PATH_STR + file.getName();
-        } else {
-            path = URL_PATH_STR + String.join(URL_PATH_STR, prefixList) + URL_PATH_STR + file.getName();
-        }
+        String path = Util.convert2path(prefixList, file.getName());
 //        log.info("file path: {}", path);
         byte[] bytes = loadFileContents(file.getPath());
         String hash = Util.md5(bytes);
@@ -84,8 +79,10 @@ public class ResourceCache {
         fileCache.put(path, fileContent);
     }
 
-    public void storeWithPath(List<String> prefixList, byte[] bytes) {
-        
+    public void storeWithPath(List<String> prefixList, byte[] bytes, String encoding, String fileName, ResourceType resourceType) {
+        String path = Util.convert2path(prefixList, fileName);
+        FileContent fileContent = new FileContent(fileName, path, null, null, encoding, bytes, resourceType);
+        fileCache.put(path, fileContent);
     }
 
     private byte[] loadFileContents(String filePath) {

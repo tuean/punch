@@ -2,19 +2,26 @@ package com.tuean.util;
 
 import com.tuean.entity.MarkdownFile;
 import com.tuean.entity.blog.Post;
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.swing.text.DateFormatter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static com.tuean.consts.Const.URL_PATH_STR;
 
 @Slf4j
 public class Util {
@@ -144,7 +151,30 @@ public class Util {
      * @return
      */
     public static Post convertFile2Post(MarkdownFile file) {
+        Map<String, Object> properties = getStringObjectMap(file);
+
+        Post post = new Post();
+        post.setAuthor(obj2Str(properties.getOrDefault("author", file.getAuthor())));
+        post.setDescription(obj2Str(properties.getOrDefault("summary", "")));
+        post.setTitle(obj2Str(properties.getOrDefault("title", file.getFileName())));
+        post.setName(file.getFileName());
+        post.setTags((List) properties.getOrDefault("tags", new ArrayList<>()));
+        String dateStr = null;
+//        if (date instanceof Date) dateStr = Util.date2String(date);
+        switch (properties.get("date")) {
+            case Date d -> dateStr = Util.date2String(d);
+            case String s -> dateStr = s;
+            default -> dateStr = "";
+        };
+        post.setPublishDate(StringUtil.isNullOrEmpty(dateStr) ? unix2String(file.getLastModified()) : dateStr);
+        return post;
+    }
+
+    private static Map<String, Object> getStringObjectMap(MarkdownFile file) {
         String[] contents = file.getContent().split("\r\n");
+        if  (contents.length < 2) {
+            contents = file.getContent().split("\n");
+        }
         int start = 0;
         StringBuilder sb = new StringBuilder();
         for (String line : contents) {
@@ -158,14 +188,7 @@ public class Util {
         Yaml yaml = new Yaml();
         Map<String, Object> properties = yaml.load(sb.toString().replace("\\t(TAB)", ""));
         if (properties == null) properties = new HashMap<>();
-
-        Post post = new Post();
-        post.setAuthor(obj2Str(properties.getOrDefault("author", file.getAuthor())));
-        post.setDescription(obj2Str(properties.getOrDefault("summary", "")));
-        post.setName(obj2Str(properties.getOrDefault("title", file.getFileName())));
-        post.setTags((List) properties.getOrDefault("tags", new ArrayList<>()));
-        post.setPublishDate(obj2Str(properties.getOrDefault("date", unix2String(file.getLastModified()))));
-        return post;
+        return properties;
     }
 
     public static String unix2String(Long unixTime) {
@@ -175,10 +198,22 @@ public class Util {
         return Instant.ofEpochMilli(unixTime).atZone(ZoneId.systemDefault()).format(formatter);
     }
 
+    public static String date2String(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(date);
+    }
+
     public static String obj2Str(Object c) {
         return c == null ? "" : String.valueOf(c);
     }
 
+    public static String convert2path(List<String> prefixList, String fileName) {
+        if (CollectionUtils.isEmpty(prefixList)) {
+            return String.join(URL_PATH_STR, prefixList) + URL_PATH_STR + fileName;
+        } else {
+            return URL_PATH_STR + String.join(URL_PATH_STR, prefixList) + URL_PATH_STR + fileName;
+        }
+    }
 
 
     public static void main(String[] args) {

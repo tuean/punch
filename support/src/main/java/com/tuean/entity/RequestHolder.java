@@ -1,6 +1,9 @@
 package com.tuean.entity;
 
+import com.tuean.config.Environment;
 import com.tuean.consts.ResourceType;
+
+import java.util.List;
 
 public class RequestHolder {
 
@@ -8,9 +11,19 @@ public class RequestHolder {
 
     private byte[] response;
 
+    private List<HttpHeader> headers;
+
+
     public RequestHolder(ResourceType resourceType, byte[] response) {
         this.resourceType = resourceType;
         this.response = response;
+        this.headers = Environment.headers;
+    }
+
+    public RequestHolder(ResourceType resourceType, byte[] response, List<HttpHeader> headers) {
+        this.resourceType = resourceType;
+        this.response = response;
+        this.headers = headers;
     }
 
     public ResourceType getResourceType() {
@@ -27,5 +40,13 @@ public class RequestHolder {
 
     public void setResponse(byte[] response) {
         this.response = response;
+    }
+
+    public List<HttpHeader> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(List<HttpHeader> headers) {
+        this.headers = headers;
     }
 }

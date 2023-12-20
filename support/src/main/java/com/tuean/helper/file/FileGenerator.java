@@ -25,10 +25,14 @@ public class FileGenerator {
                 logger.error("covert markdown file error: {}", t.getFileName(), var);
                 return null;
             }
-        }).filter(Objects::nonNull).toList();
+        }).filter(Objects::nonNull)
+                .sorted(Comparator.comparing(Post::getPublishDate).reversed())
+                .toList();
 
-        Integer size = Integer.parseInt(Environment.getProperty("blog.post.recommend.size"));
-        List<Post> recommend = posts.stream().sorted(Comparator.comparing(Post::getPublishDate).reversed()).limit(size).toList();
+        int size = Integer.parseInt(Environment.getProperty("blog.post.recommend.size"));
+        List<Post> recommend = posts.stream()
+                .sorted(Comparator.comparing(Post::getPublishDate).reversed())
+                .limit(size).toList();
 
         Map<String, Integer> tagCount = new HashMap<>();
         posts.forEach(post -> {

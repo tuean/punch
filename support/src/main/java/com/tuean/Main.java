@@ -40,15 +40,16 @@ public class Main {
         Router router = new Router("com.tuean");
         ResourceCache resourceCache = new ResourceCache();
 
-        router.init();
-        router.init(resourceCache);
-
-        WebdavClient client = new WebdavClient(resourceCache);
-
+        router.init(); // register api requests
 
         HttpServer httpServer = new HttpServer(config.getPort(), router);
         httpServer.run();
         logger.info("server started, cost: {} ms", stopWatch.getLastTask());
+
+        WebdavClient client = new WebdavClient(resourceCache);
+        client.refreshPostJson();
+
+        router.init(resourceCache); // register file requests
     }
 
 }

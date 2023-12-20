@@ -21,13 +21,13 @@ public class PropertiesFileReader {
 
         try (InputStream input = PropertiesFileReader.class.getClassLoader().getResourceAsStream(fileName)) {
             // Load properties file
-            Environment.properties.load(input);
+            Environment.init(input);
 
-            String serverPort = Environment.properties.getProperty("server.port");
+            String serverPort = Environment.getProperty("server.port");
             Integer port = Integer.parseInt(serverPort == null ? "8888" : serverPort);
-            String markdownPath = Environment.properties.getProperty("markdown.path");
-            String author = Environment.properties.getProperty("author");
-            String source = Environment.properties.getProperty("file.proxy.location");
+            String markdownPath = Environment.getProperty("markdown.path");
+            String author = Environment.getProperty("author");
+            String source = Environment.getProperty("file.proxy.location");
             config = new Config(port, markdownPath, author, source);
             return config;
         } catch (IOException ex) {

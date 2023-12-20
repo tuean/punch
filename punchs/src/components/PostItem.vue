@@ -8,7 +8,7 @@
 
             <dt class="sr-only">Published on</dt>
             <dd class="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-              <time datetime="{{post.published}}">{{post.publish_date}}</time>
+              <time datetime="{{post.published}}">{{post.publishDate}}</time>
             </dd>
           </dl>
 

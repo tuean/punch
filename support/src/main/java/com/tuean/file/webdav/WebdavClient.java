@@ -1,11 +1,13 @@
 package com.tuean.file.webdav;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineImpl;
 import com.tuean.annotation.Value;
 import com.tuean.cache.ResourceCache;
 import com.tuean.config.Environment;
+import com.tuean.consts.ResourceType;
 import com.tuean.entity.MarkdownFile;
 import com.tuean.entity.blog.Context;
 import com.tuean.entity.blog.Post;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,14 +31,14 @@ public class WebdavClient {
 
     private static Logger logger = LoggerFactory.getLogger(WebdavClient.class);
 
-    @Value("webdav.account")
-    private String account;
-
-    @Value("webdav.password")
-    private String password;
-
-    @Value("webdav.url")
-    private String webdavUrl;
+//    @Value("webdav.account")
+//    private String account;
+//
+//    @Value("webdav.password")
+//    private String password;
+//
+//    @Value("webdav.url")
+//    private String webdavUrl;
 
     private ResourceCache resourceCache;
 
@@ -43,19 +46,22 @@ public class WebdavClient {
     private Sardine sardine;
 
     public WebdavClient(ResourceCache resourceCache) {
+        this.resourceCache = resourceCache;
         if (sardine == null) {
             init();
         }
-        this.resourceCache = resourceCache;
     }
 
     public void init() {
         sardine = new SardineImpl(Environment.getProperty("webdav.account"), Environment.getProperty("webdav.password"));
     }
 
-    public void doRefresh() throws IOException {
+    public void refreshPostJson() throws IOException {
         List<MarkdownFile> mds = loadFiles();
         Context context = FileGenerator.generate(mds);
+        ObjectMapper mapper = new ObjectMapper();
+        byte[] content = mapper.writeValueAsBytes(context);
+        resourceCache.storeWithPath(Collections.emptyList(), content, "utf8", "post.json", ResourceType.json);
     }
 
     public List<DavResource> list() throws IOException {

@@ -1,7 +1,9 @@
 package com.tuean.server.http;
 
+import com.tuean.config.Environment;
 import com.tuean.consts.Const;
 import com.tuean.consts.ResourceType;
+import com.tuean.entity.HttpHeader;
 import com.tuean.entity.RequestHolder;
 import com.tuean.exception.BadRequestException;
 import io.netty.buffer.ByteBuf;
@@ -10,9 +12,12 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+import java.util.List;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -62,12 +67,12 @@ public class CustomHandler extends ChannelInboundHandlerAdapter {
                 LastHttpContent trailer = (LastHttpContent) msg;
                 try {
                     RequestHolder holder = router.doRequest(this.request, this.content);
-                    writeResponse(ctx, trailer, holder.getResponse(), "UTF-8", holder.getResourceType());
+                    writeResponse(ctx, trailer, holder.getResponse(), "UTF-8", holder.getResourceType(), holder.getHeaders());
                 } catch (BadRequestException badRequestException) {
-                    writeResponse(ctx, trailer, router.getObjectMapper().writeValueAsBytes(Const.bad_request), "UTF-8", ResourceType.json);
+                    writeResponse(ctx, trailer, router.getObjectMapper().writeValueAsBytes(Const.bad_request), "UTF-8", ResourceType.json, null);
                 } catch (Exception var) {
                     logger.error("", var);
-                    writeResponse(ctx, trailer, router.getObjectMapper().writeValueAsBytes(Const.err), "UTF-8", ResourceType.json);
+                    writeResponse(ctx, trailer, router.getObjectMapper().writeValueAsBytes(Const.err), "UTF-8", ResourceType.json, null);
                 }
             }
         }
@@ -89,7 +94,7 @@ public class CustomHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void writeResponse(ChannelHandlerContext ctx, LastHttpContent trailer,
-                               byte[] responseData, String encoding, ResourceType resourceType) {
+                               byte[] responseData, String encoding, ResourceType resourceType, List<HttpHeader> headers) {
         boolean keepAlive = HttpUtil.isKeepAlive(request);
         FullHttpResponse httpResponse = new DefaultFullHttpResponse(HTTP_1_1,
                 ((HttpObject) trailer).decoderResult().isSuccess() ? OK : BAD_REQUEST,
@@ -109,6 +114,11 @@ public class CustomHandler extends ChannelInboundHandlerAdapter {
             httpResponse.headers().set(HttpHeaderNames.CONNECTION,
                     HttpHeaderValues.KEEP_ALIVE);
         }
+
+        if (CollectionUtils.isNotEmpty(headers)) {
+            headers.forEach(header -> httpResponse.headers().set(header.getKey(), header.getValue()));
+        }
+
         ctx.write(httpResponse);
 
         if (!keepAlive) {

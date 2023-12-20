@@ -1,5 +1,8 @@
 package com.tuean.entity.blog;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.List;
 
 public class Context {
@@ -17,6 +20,16 @@ public class Context {
         this.tags = tags;
     }
 
+
+    @Override
+    public String toString() {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public List<Post> getRecommend() {
         return recommend;

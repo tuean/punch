@@ -26,7 +26,7 @@ export default {
         filling_link: "https://beian.miit.gov.cn/",
         author: "© 2023 tuean"
     },
-    post_resource: "http://localhost:5173/src/post.json",
+    post_resource: "http://localhost:8888/post.json",
     link_text: "Read more ->",
     blog_search_left: "所有文章"
 }
