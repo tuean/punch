@@ -53,7 +53,7 @@ import config from "../config"
 import {computed, inject, ref, watch} from "vue";
 
 const postjson = inject("global_context").value
-const postItems = postjson.postItems
+const postItems = postjson.posts
 const tags = postjson.tags
 const p = ref(postItems.slice())
 

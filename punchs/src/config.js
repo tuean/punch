@@ -6,8 +6,8 @@ export default {
            title: "home",
            path: "/",
         }, {
-            title: "blog",
-            path: "/blog"
+            title: "blogs",
+            path: "/blogs"
         },
         // {
         //     title: "resume",
@@ -28,6 +28,7 @@ export default {
         author: "© 2023 tuean"
     },
     post_resource: "http://localhost:8888/post.json",
+    post_detail_api: "http://localhost:8888/",
     link_text: "Read more ->",
     blog_search_left: "所有文章"
 }

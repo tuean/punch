@@ -42,7 +42,7 @@
 
             <div class="divide-y divide-gray-200 dark:divide-gray-700 xl:col-span-3 xl:row-span-2 xl:pb-0">
               <div class="prose max-w-none pt-10 pb-8 dark:prose-dark">
-
+                <div v-html="content_html"></div>
               </div>
             </div>
 
@@ -90,13 +90,13 @@
 
 <script setup>
 import { useRoute } from 'vue-router';
-import { inject } from 'vue';
+import {inject, ref} from 'vue';
 import config from "../config"
 import markdownit from 'markdown-it'
 
 
 const route = useRoute();
-const postTitle = route.params.postItem;
+const postTitle = route.params.post;
 
 const postjson = inject("global_context").value
 const posts = postjson.posts
@@ -104,7 +104,18 @@ const postItem = posts.find(postItem => postItem.title === postTitle)
 console.log("postItem", posts, postItem);
 
 const md = markdownit()
-const content = md.render(postItem.);
+const content = ref({})
+let postApi = config.post_detail_api + postTitle
+try {
+  const response = await fetch(postApi);
+  content.value = await response.json();
+  console.log("load post success", content)
+} catch (err) {
+  console.log("load post error", err)
+}
+
+const content_html = md.render(content.value.content);
+console.log('content_html', content_html)
 
 const tag_link = tag => "/tags/" + tag
 

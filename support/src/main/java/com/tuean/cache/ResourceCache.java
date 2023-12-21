@@ -76,13 +76,13 @@ public class ResourceCache {
         String encoding = Util.getFileContent(file);
         String extension = Util.getExtensionByStringHandling(file.getPath()).orElse("");
         FileContent fileContent = new FileContent(file.getName(), path, file.getAbsolutePath(), hash, encoding, bytes, ResourceType.getByExtension(extension));
-        fileCache.put(path, fileContent);
+        fileCache.put(Util.encodeChinese(path), fileContent);
     }
 
     public void storeWithPath(List<String> prefixList, byte[] bytes, String encoding, String fileName, ResourceType resourceType) {
         String path = Util.convert2path(prefixList, fileName);
         FileContent fileContent = new FileContent(fileName, path, null, null, encoding, bytes, resourceType);
-        fileCache.put(path, fileContent);
+        fileCache.put(Util.encodeChinese(path), fileContent);
     }
 
     private byte[] loadFileContents(String filePath) {
@@ -90,7 +90,7 @@ public class ResourceCache {
             Path path = Paths.get(filePath);
             return Files.readAllBytes(path);
         } catch (Exception var) {
-//            log.error("load resource file error", var);
+            log.error("load resource file error", var);
         }
         return null;
     }

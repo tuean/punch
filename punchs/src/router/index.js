@@ -13,7 +13,7 @@ const router = createRouter({
       component: MainPage
     },
     {
-      path: '/blog',
+      path: '/blogs',
       name: 'blog.vue',
       component: () => import("../page/Blog.vue")
     },

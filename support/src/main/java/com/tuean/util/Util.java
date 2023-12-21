@@ -10,6 +10,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -19,6 +21,8 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.tuean.consts.Const.URL_PATH_STR;
 
@@ -137,7 +141,7 @@ public class Util {
     public static Post convertFile2Post(MarkdownFile file) {
         Map<String, Object> properties = getStringObjectMap(file);
         String title = obj2Str(properties.getOrDefault("title", file.getFileName()));
-        String content = ""; // todo
+        String content = getMarkdownContent(file);
         return new Post(title, content);
     }
 
@@ -166,7 +170,6 @@ public class Util {
         postItem.setName(file.getFileName());
         postItem.setTags((List) properties.getOrDefault("tags", new ArrayList<>()));
         String dateStr = null;
-//        if (date instanceof Date) dateStr = Util.date2String(date);
         switch (properties.get("date")) {
             case Date d -> dateStr = Util.date2String(d);
             case String s -> dateStr = s;
@@ -197,10 +200,25 @@ public class Util {
         return properties;
     }
 
+    private static String getMarkdownContent(MarkdownFile file) {
+        String[] contents = file.getContent().split("\r\n");
+        if  (contents.length < 2) {
+            contents = file.getContent().split("\n");
+        }
+        int start = 0;
+        StringBuilder sb = new StringBuilder();
+        for (String line : contents) {
+            if (line.startsWith("---")) {
+                start++; continue;
+            }
+            if (start > 1) sb.append(line).append("\r\n");
+        }
+        return sb.toString();
+    }
+
     public static String unix2String(Long unixTime) {
         if (unixTime == null) return "";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        // 使用格式器将 Unix 时间戳转换为字符串
         return Instant.ofEpochMilli(unixTime).atZone(ZoneId.systemDefault()).format(formatter);
     }
 
@@ -220,6 +238,30 @@ public class Util {
             return URL_PATH_STR + String.join(URL_PATH_STR, prefixList) + URL_PATH_STR + fileName;
         }
     }
+
+
+    public static String encodeChinese(String source) {
+//        boolean containsChinese = source.matches(".*[\\u4E00-\\u9FA5]+.*");
+//        if (!containsChinese) return source;
+        StringBuilder sb = new StringBuilder();
+        Pattern pattern = Pattern.compile("[\\u4e00-\\u9fa5]");
+        Matcher matcher = pattern.matcher(source);
+
+        while (matcher.find()) {
+            String chineseChar = matcher.group();
+            String encodedChar = null;
+            try {
+                encodedChar = URLEncoder.encode(chineseChar, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+            matcher.appendReplacement(sb, encodedChar);
+        }
+        matcher.appendTail(sb);
+
+        return sb.toString();
+    }
+
 
 
     public static void main(String[] args) {
