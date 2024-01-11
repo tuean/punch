@@ -3,18 +3,23 @@ package com.tuean.cache;
 import com.tuean.entity.MarkdownFile;
 import com.tuean.file.MarkdownFileReader;
 import com.tuean.file.PropertiesFileReader;
+import com.tuean.helper.context.Ctx;
+import com.tuean.helper.context.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
 import java.util.List;
 
+@Ctx
 public class PostCache {
 
     private static final Logger logger = LoggerFactory.getLogger(PostCache.class);
 
+    @Inject
+    MarkdownFileReader reader;
+
     public void onApplicationEvent() {
-        MarkdownFileReader reader = new MarkdownFileReader();
         setFiles(reader.allMarkdownFiles(PropertiesFileReader.getConfig().getMarkdownPath()));
         logger.info("post cache load complete");
     }

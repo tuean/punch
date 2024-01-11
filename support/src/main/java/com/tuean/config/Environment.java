@@ -1,6 +1,7 @@
 package com.tuean.config;
 
 import com.tuean.entity.HttpHeader;
+import com.tuean.helper.context.Ctx;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+@Ctx
 public class Environment {
 
     protected static Properties properties;

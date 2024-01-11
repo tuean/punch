@@ -2,14 +2,14 @@ package com.tuean.job;
 
 import com.tuean.file.webdav.WebdavClient;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
-@Slf4j
 public class PostRefresh {
+
+    private static final Logger logger = LoggerFactory.getLogger(PostRefresh.class);
 
     private ScheduledExecutorService executors;
 
@@ -18,18 +18,18 @@ public class PostRefresh {
     }
 
     public void start(WebdavClient client) {
-        this.executors.schedule(() -> {
-            log.info("refresh job start");
-            doJob();
-            log.info("refresh job finish");
-        }, 1, TimeUnit.MINUTES);
+        ScheduledFuture<?> runnableFuture = this.executors.scheduleAtFixedRate(() -> {
+            logger.info("refresh job start");
+            doJob(client);
+            logger.info("refresh job finish");
+        }, 1, 1, TimeUnit.MINUTES);
     }
 
-    private void doJob() {
+    private void doJob(WebdavClient client) {
         try {
-
+            client.refreshPostJson();
         } catch (Exception var) {
-
+            logger.info("refresh post error", var);
         }
     }
 

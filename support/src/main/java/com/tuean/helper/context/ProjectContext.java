@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +20,9 @@ public class ProjectContext {
     private static Map<String, Bean> ctxMap = new ConcurrentHashMap<>();
     private static Map<Class, Bean> beanMap = new ConcurrentHashMap<>();
 
+    private Map<String, Object> beanCache = new ConcurrentHashMap<>();
+
+
 
     public ProjectContext(String packageName) {
         init(packageName);
@@ -26,17 +30,26 @@ public class ProjectContext {
 
     public void init(String packageName) {
         Set<Class<?>> annotatedClasses = findAnnotatedClasses(packageName, Ctx.class);
-        annotatedClasses.parallelStream().forEach(this::createBean);
+        annotatedClasses.stream()
+//                .parallel()
+                .forEach(this::createBean);
     }
 
     private void createBean(Class<?> clazz) {
         Ctx ctx = clazz.getAnnotation(Ctx.class);
-        String beanName = ctx.name();
-        if (Util.isBlank(beanName)) beanName = clazz.getPackageName() + "." + clazz.getName();
+        String beanName = ContextUtil.beanName(ctx, clazz);
         Constructor[] constructors = clazz.getConstructors();
         Class[] paramsClass = Arrays.stream(constructors).map(Constructor::getDeclaringClass).toArray(Class[]::new);
         try {
             Object o = clazz.getDeclaredConstructor().newInstance();
+            Field[] fields = clazz.getDeclaredFields();
+            for (Field field : fields) {
+                Inject inject = field.getDeclaredAnnotation(Inject.class);
+                if (inject == null) continue;
+                Class fieldClass = inject.getClass();
+                String fieldBeanName = ContextUtil.beanName(inject, fieldClass);
+                Bean bean = ctxMap.get(fieldBeanName);
+            }
             Bean bean = new Bean(beanName, clazz, o);
             ctxMap.put(beanName, bean);
             beanMap.put(clazz, bean);

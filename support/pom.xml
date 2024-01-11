@@ -24,7 +24,6 @@
     <netty.version>4.1.90.Final</netty.version>
     <junit.version>4.13.2</junit.version>
     <logback.version>1.4.6</logback.version>
-<!--    <spring.version>6.0.6</spring.version>-->
     <reflections.version>0.10.2</reflections.version>
     <guava.version>31.1-jre</guava.version>
     <beanUtils.version>1.9.4</beanUtils.version>
@@ -99,12 +98,12 @@
       <version>2.11.0</version>
     </dependency>
 
-      <dependency>
-          <groupId>org.projectlombok</groupId>
-          <artifactId>lombok</artifactId>
-          <version>1.18.30</version>
-          <scope>compile</scope>
-      </dependency>
+<!--      <dependency>-->
+<!--          <groupId>org.projectlombok</groupId>-->
+<!--          <artifactId>lombok</artifactId>-->
+<!--          <version>1.18.30</version>-->
+<!--          <scope>compile</scope>-->
+<!--      </dependency>-->
 
 <!--    <dependency>-->
 <!--      <groupId>com.google.auto.service</groupId>-->

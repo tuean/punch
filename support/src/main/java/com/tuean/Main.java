@@ -41,12 +41,12 @@ public class Main {
         httpServer.run();
         logger.info("server started, cost: {} ms", stopWatch.getLastTask());
 
-        WebdavClient client = new WebdavClient(resourceCache);
-        client.refreshPostJson();
+//        WebdavClient client = new WebdavClient(resourceCache);
+//        client.refreshPostJson();
 
-        router.init(resourceCache); // register file requests
+//        router.init(resourceCache); // register file requests
 
-        new PostRefresh().start(client); // start to refresh webdav files
+//        new PostRefresh().start(client); // start to refresh webdav files
     }
 
 }

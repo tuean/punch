@@ -7,6 +7,7 @@ import com.tuean.cache.PostCache;
 import com.tuean.entity.MarkdownFile;
 import com.tuean.exception.BadRequestException;
 import com.tuean.helper.context.Ctx;
+import com.tuean.helper.context.Inject;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Api
 public class PostController {
 
-    @Ctx
+    @Inject
     PostCache postCache;
 
     @ApiJson(path = "/post/info")

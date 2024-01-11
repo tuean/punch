@@ -10,6 +10,8 @@ import com.tuean.util.Util;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +24,8 @@ import java.util.List;
 
 import static com.tuean.consts.Const.URL_PATH_STR;
 
-@Slf4j
 public class ResourceCache {
+    private static final Logger logger = LoggerFactory.getLogger(ResourceCache.class);
 
     public static final String PREFIX = "";
     public LoadingCache<String, FileContent> getCache() {
@@ -42,7 +44,7 @@ public class ResourceCache {
 
     public ResourceCache() {
         String proxyLocation = PropertiesFileReader.getConfig().getSourcePath();
-//        log.info("start to load resource file: {}", proxyLocation);
+//        logger.info("start to load resource file: {}", proxyLocation);
 
         File files = new File(proxyLocation);
         if (!files.isDirectory() || !files.exists()) throw new RuntimeException("resource file location with wrong config");
@@ -70,7 +72,7 @@ public class ResourceCache {
     private void storeWithPath(List<String> prefixList, File file) {
         prefixList = prefixList.stream().filter(n -> !StringUtil.isNullOrEmpty(n)).toList();
         String path = Util.convert2path(prefixList, file.getName());
-//        log.info("file path: {}", path);
+//        logger.info("file path: {}", path);
         byte[] bytes = loadFileContents(file.getPath());
         String hash = Util.md5(bytes);
         String encoding = Util.getFileContent(file);
@@ -90,7 +92,7 @@ public class ResourceCache {
             Path path = Paths.get(filePath);
             return Files.readAllBytes(path);
         } catch (Exception var) {
-            log.error("load resource file error", var);
+            logger.error("load resource file error", var);
         }
         return null;
     }

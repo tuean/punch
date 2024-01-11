@@ -1,6 +1,5 @@
 package com.tuean.server.http;
 
-import com.tuean.config.Environment;
 import com.tuean.consts.Const;
 import com.tuean.consts.ResourceType;
 import com.tuean.entity.HttpHeader;

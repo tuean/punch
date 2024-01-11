@@ -1,6 +1,7 @@
 package com.tuean.file;
 
 import com.tuean.entity.MarkdownFile;
+import com.tuean.helper.context.Ctx;
 import com.tuean.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Ctx
 public class MarkdownFileReader {
 
     private static final Logger logger = LoggerFactory.getLogger(MarkdownFileReader.class);
