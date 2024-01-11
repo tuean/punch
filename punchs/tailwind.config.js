@@ -4,6 +4,11 @@ const colors = require('tailwindcss/colors');
 
 
 module.exports = {
+  safelist:[
+    {
+      pattern: /hljs+/,
+    }
+  ],
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx,json}'],
   darkMode: 'media', // or 'media' or 'class'
   theme: {
@@ -27,6 +32,8 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+
+  ]
 }
 

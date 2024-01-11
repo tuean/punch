@@ -48,7 +48,6 @@
 
 <script setup>
 import PostItem from "../components/PostItem.vue"
-// import PostJson from "../postItem.json"
 import config from "../config"
 import {computed, inject, ref, watch} from "vue";
 

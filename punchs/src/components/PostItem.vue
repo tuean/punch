@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { toRefs, defineProps } from 'vue';
+import { toRefs } from 'vue';
 import config from './../config';
 
 const props = defineProps({

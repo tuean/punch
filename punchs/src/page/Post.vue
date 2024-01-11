@@ -28,7 +28,7 @@
               <dd>
                 <ul class="flex justify-center space-x-8 sm:space-x-12 xl:block xl:space-x-0 xl:space-y-8">
                   <li class="flex items-center space-x-2">
-                    <img :src="config.avatar" width="38px" height="38px" alt="avatar" class="h-10 w-10 rounded-lg">
+                    <img :src="config.avatar" v-if="config.avatar !== ''" width="38px" height="38px" alt="avatar" class="h-10 w-10 rounded-lg">
                     <dl class="whitespace-nowrap text-sm font-medium leading-5">
                       <dt class="sr-only">Author</dt>
                       <dd class="text-base font-bold leading-6 text-gray-600 dark:text-gray-300">
@@ -74,7 +74,7 @@
 <!--                </div>-->
               </div>
               <div class="pt-4 xl:pt-8">
-                <a href="/blog" class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
+                <a href="/blogs" class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
                   ← Back to the blog
                 </a>
               </div>
@@ -93,7 +93,8 @@ import { useRoute } from 'vue-router';
 import {inject, ref} from 'vue';
 import config from "../config"
 import markdownit from 'markdown-it'
-
+import hljs from 'highlight.js'
+import 'highlight.js/styles/github-dark.min.css'
 
 const route = useRoute();
 const postTitle = route.params.post;
@@ -103,7 +104,20 @@ const posts = postjson.posts
 const postItem = posts.find(postItem => postItem.title === postTitle)
 console.log("postItem", posts, postItem);
 
-const md = markdownit()
+const md = markdownit({
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return '<pre class="hljs"><code>' +
+            hljs.highlight(lang, str, true).value +
+            '</code></pre>';
+      } catch (__) {}
+    }
+
+    return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+  }
+})
+
 const content = ref({})
 let postApi = config.post_detail_api + postTitle
 try {

@@ -23,6 +23,11 @@ const router = createRouter({
       component: () => import("../page/Post.vue")
     },
     {
+      path: "/tags/:tag",
+      name: "tag.vue",
+      component: () => import("../page/Tag.vue")
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting

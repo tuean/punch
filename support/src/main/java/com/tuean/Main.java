@@ -5,6 +5,7 @@ import com.tuean.entity.Config;
 import com.tuean.file.PropertiesFileReader;
 import com.tuean.file.webdav.WebdavClient;
 import com.tuean.helper.StopWatch;
+import com.tuean.job.PostRefresh;
 import com.tuean.server.http.HttpServer;
 import com.tuean.server.http.Router;
 import org.slf4j.Logger;
@@ -44,6 +45,8 @@ public class Main {
         client.refreshPostJson();
 
         router.init(resourceCache); // register file requests
+
+        new PostRefresh().start(client); // start to refresh webdav files
     }
 
 }
