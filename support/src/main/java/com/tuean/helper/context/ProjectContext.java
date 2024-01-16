@@ -67,17 +67,17 @@ public class ProjectContext {
         for (Field field : fields) {
             Inject inject = field.getDeclaredAnnotation(Inject.class);
             if (inject == null) continue;
-            Class fieldClass = inject.getClass();
-            String fieldBeanName = ContextUtil.beanName(inject, fieldClass);
-            Bean injectBean = beanCache.get(fieldBeanName);
-            if (injectBean == null) {
-                logger.error("can't find bean: {}", beanName);
-                throw new NullPointerException();
-            }
 
             try {
+                Class fieldClass = Class.forName(field.getType().getName());
+                String fieldBeanName = ContextUtil.beanName(inject, fieldClass);
+                Bean injectBean = beanCache.get(fieldBeanName);
+                if (injectBean == null) {
+                    logger.error("can't find bean: {}", beanName);
+                    throw new NullPointerException();
+                }
                 field.setAccessible(true);
-                field.set(field.getName(), beanInstance);
+                field.set(beanInstance, injectBean.getInstance());
             } catch (Exception var) {
                 logger.error("inject filed error: {} class:{}", field.getName(), bean.getClazz());
                 logger.error("inject filed error", var);
