@@ -4,8 +4,9 @@ import com.tuean.entity.MarkdownFile;
 import com.tuean.entity.blog.Post;
 import com.tuean.entity.blog.PostItem;
 import io.netty.util.internal.StringUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -26,8 +27,9 @@ import java.util.regex.Pattern;
 
 import static com.tuean.consts.Const.URL_PATH_STR;
 
-@Slf4j
 public class Util {
+
+    private static Logger logger = LoggerFactory.getLogger(Util.class);
 
 
     public static String pureUrl(String uri) {

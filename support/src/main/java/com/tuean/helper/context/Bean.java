@@ -1,9 +1,5 @@
 package com.tuean.helper.context;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 public class Bean {
 
     private String name;
@@ -19,6 +15,15 @@ public class Bean {
         this.name = name;
         this.clazz = clazz;
         this.instance = instance;
+    }
+
+    @Override
+    public String toString() {
+        return "Bean{" +
+                "name='" + name + '\'' +
+                ", clazz=" + clazz +
+                ", instance=" + instance +
+                '}';
     }
 
     public String getName() {

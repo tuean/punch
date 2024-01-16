@@ -20,7 +20,7 @@ public class ProjectContext {
     private static Map<String, Bean> ctxMap = new ConcurrentHashMap<>();
     private static Map<Class, Bean> beanMap = new ConcurrentHashMap<>();
 
-    private Map<String, Object> beanCache = new ConcurrentHashMap<>();
+    private Map<String, Bean> beanCache = new ConcurrentHashMap<>();
 
 
 
@@ -32,32 +32,61 @@ public class ProjectContext {
         Set<Class<?>> annotatedClasses = findAnnotatedClasses(packageName, Ctx.class);
         annotatedClasses.stream()
 //                .parallel()
-                .forEach(this::createBean);
+                .forEach(this::prepareBean);
+        createBeanActually();
     }
 
-    private void createBean(Class<?> clazz) {
+
+    private void prepareBean(Class<?> clazz) {
         Ctx ctx = clazz.getAnnotation(Ctx.class);
         String beanName = ContextUtil.beanName(ctx, clazz);
         Constructor[] constructors = clazz.getConstructors();
-        Class[] paramsClass = Arrays.stream(constructors).map(Constructor::getDeclaringClass).toArray(Class[]::new);
+//        Class[] paramsClass = Arrays.stream(constructors).map(Constructor::getDeclaringClass).toArray(Class[]::new);
         try {
             Object o = clazz.getDeclaredConstructor().newInstance();
-            Field[] fields = clazz.getDeclaredFields();
-            for (Field field : fields) {
-                Inject inject = field.getDeclaredAnnotation(Inject.class);
-                if (inject == null) continue;
-                Class fieldClass = inject.getClass();
-                String fieldBeanName = ContextUtil.beanName(inject, fieldClass);
-                Bean bean = ctxMap.get(fieldBeanName);
-            }
             Bean bean = new Bean(beanName, clazz, o);
-            ctxMap.put(beanName, bean);
-            beanMap.put(clazz, bean);
-            logger.info("registered ctx bean :{}", beanName);
+            beanCache.put(beanName, bean);
+            logger.info("prepare ctx bean :{}", beanName);
         } catch (Exception var) {
-            logger.error("create bean error " + beanName, var);
+            logger.error("prepare bean error " + beanName, var);
             throw new RuntimeException();
         }
+    }
+
+    private void createBeanActually() {
+        beanCache.entrySet().stream()
+                .parallel()
+                .forEach(this::fillBeanField);
+    }
+
+    private void fillBeanField(Map.Entry<String, Bean> entry) {
+        String beanName = entry.getKey();
+        Bean bean = entry.getValue();
+        Object beanInstance = bean.getInstance();
+        Field[] fields = bean.getClazz().getDeclaredFields();
+        for (Field field : fields) {
+            Inject inject = field.getDeclaredAnnotation(Inject.class);
+            if (inject == null) continue;
+            Class fieldClass = inject.getClass();
+            String fieldBeanName = ContextUtil.beanName(inject, fieldClass);
+            Bean injectBean = beanCache.get(fieldBeanName);
+            if (injectBean == null) {
+                logger.error("can't find bean: {}", beanName);
+                throw new NullPointerException();
+            }
+
+            try {
+                field.setAccessible(true);
+                field.set(field.getName(), beanInstance);
+            } catch (Exception var) {
+                logger.error("inject filed error: {} class:{}", field.getName(), bean.getClazz());
+                logger.error("inject filed error", var);
+                throw new RuntimeException("inject filed error");
+            }
+        }
+        logger.info("register bean finish: {}", bean);
+        ctxMap.put(beanName, bean);
+        beanMap.put(bean.getClazz(), bean);
     }
 
 
