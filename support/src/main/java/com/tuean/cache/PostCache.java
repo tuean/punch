@@ -1,5 +1,6 @@
 package com.tuean.cache;
 
+import com.tuean.annotation.InitMethod;
 import com.tuean.entity.MarkdownFile;
 import com.tuean.file.MarkdownFileReader;
 import com.tuean.file.PropertiesFileReader;
@@ -19,6 +20,7 @@ public class PostCache {
     @Inject
     MarkdownFileReader reader;
 
+    @InitMethod
     public void onApplicationEvent() {
         setFiles(reader.allMarkdownFiles(PropertiesFileReader.getConfig().getMarkdownPath()));
         logger.info("post cache load complete");

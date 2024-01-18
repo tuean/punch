@@ -1,5 +1,6 @@
 package com.tuean.config;
 
+import com.tuean.annotation.InitMethod;
 import com.tuean.entity.HttpHeader;
 import com.tuean.helper.context.Ctx;
 
@@ -14,6 +15,7 @@ public class Environment {
 
     protected static Properties properties;
 
+    @InitMethod
     public static void init(InputStream inputStream) throws IOException {
         properties = new Properties();
         properties.load(inputStream);

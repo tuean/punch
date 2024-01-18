@@ -2,12 +2,14 @@ package com.tuean.file;
 
 import com.tuean.config.Environment;
 import com.tuean.entity.Config;
+import com.tuean.helper.context.Ctx;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+@Ctx
 public class PropertiesFileReader {
 
     public static Config getConfig() { return config;}
@@ -34,6 +36,14 @@ public class PropertiesFileReader {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    public void initConfig() throws IOException {
+        String fileName = "application.properties";
+
+        try (InputStream input = PropertiesFileReader.class.getClassLoader().getResourceAsStream(fileName)) {
+            Environment.init(input);
+        }
     }
 
 }
