@@ -13,10 +13,9 @@ import java.util.Properties;
 @Ctx
 public class Environment {
 
-    protected static Properties properties;
+    protected Properties properties;
 
-    @InitMethod
-    public static void init(InputStream inputStream) throws IOException {
+    public void init(InputStream inputStream) throws IOException {
         properties = new Properties();
         properties.load(inputStream);
 
@@ -25,7 +24,7 @@ public class Environment {
 
     public static List<HttpHeader> headers = new ArrayList<>();
 
-    public static void refreshHeaders() {
+    public void refreshHeaders() {
         if (properties == null) return;
         if (properties.get("access.control.allow.credentials") != null) {
             headers.add(new HttpHeader("Access-Control-Allow-Credentials", String.valueOf(properties.get("access.control.allow.credentials"))));
@@ -35,10 +34,10 @@ public class Environment {
         }
     }
 
-    public static void addProperty(Object k, Object v){
+    public void addProperty(Object k, Object v){
         properties.put(k, v);
     }
-    public static String getProperty(String key) {
+    public String getProperty(String key) {
         return String.valueOf(properties.get(key));
     }
 

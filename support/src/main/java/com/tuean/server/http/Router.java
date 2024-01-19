@@ -44,23 +44,16 @@ public class Router {
     static {
         mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
     }
-    private String packageName;
 
     private ProjectContext projectContext;
 
-
-
-    public Router(String packageName) {
-        this.packageName = packageName;
+    public Router(ProjectContext projectContext) {
+        this.projectContext = projectContext;
     }
 
-    public void init() {
-        projectContext = new ProjectContext(this.packageName);
-        Set<Class<?>> annotatedClasses = findAnnotatedClasses(this.packageName, Api.class);
+    public void init(String packageName, ResourceCache cache) {
+        Set<Class<?>> annotatedClasses = findAnnotatedClasses(packageName, Api.class);
         registerRequestMappings(annotatedClasses);
-    }
-
-    public void init(ResourceCache cache) {
         registerFiles(cache);
     }
 

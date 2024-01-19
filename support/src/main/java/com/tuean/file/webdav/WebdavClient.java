@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineImpl;
+import com.tuean.annotation.Value;
 import com.tuean.cache.ResourceCache;
 import com.tuean.config.Environment;
 import com.tuean.consts.ResourceType;
 import com.tuean.entity.MarkdownFile;
 import com.tuean.entity.blog.Context;
 import com.tuean.entity.blog.Post;
+import com.tuean.helper.context.Ctx;
+import com.tuean.helper.context.Inject;
 import com.tuean.helper.file.FileGenerator;
 import com.tuean.util.Util;
 import org.apache.commons.io.IOUtils;
@@ -26,40 +29,38 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Ctx
 public class WebdavClient {
 
     private static Logger logger = LoggerFactory.getLogger(WebdavClient.class);
 
-//    @Value("webdav.account")
-//    private String account;
-//
-//    @Value("webdav.password")
-//    private String password;
-//
-//    @Value("webdav.url")
-//    private String webdavUrl;
-
-    private ResourceCache resourceCache;
+    @Value("webdav.account") private String account;
+    @Value("webdav.password") private String password;
+    @Value("webdav.url") private String webdavUrl;
+    @Value("webdav.domain") private String domain;
+    @Inject FileGenerator fileGenerator;
+    @Inject ResourceCache resourceCache;
 
     private List<MarkdownFile> temp = new ArrayList<>(1024);
     private Sardine sardine;
 
-    public WebdavClient(ResourceCache resourceCache) {
-        this.resourceCache = resourceCache;
-        if (sardine == null) {
-            init();
+    public WebdavClient() {
+        synchronized (this) {
+            if (sardine == null) {
+                init();
+            }
         }
     }
 
     public void init() {
-        sardine = new SardineImpl(Environment.getProperty("webdav.account"), Environment.getProperty("webdav.password"));
+        sardine = new SardineImpl(account, password);
     }
 
     public void refreshPostJson() throws IOException {
         List<MarkdownFile> mds = loadFiles();
 
         // union info
-        Context context = FileGenerator.generate(mds);
+        Context context = fileGenerator.generate(mds);
         ObjectMapper mapper = new ObjectMapper();
         byte[] content = mapper.writeValueAsBytes(context);
         resourceCache.storeWithPath(Collections.emptyList(), content, "utf8", "post.json", ResourceType.json);
@@ -74,7 +75,7 @@ public class WebdavClient {
 
     public List<DavResource> list() throws IOException {
         if (sardine == null) init();
-        String url = Environment.getProperty("webdav.domain") + Environment.getProperty("webdav.url");
+        String url = domain + webdavUrl;
         List<DavResource> list = sardine.list(url);
         logger.info("webdav get list: {}", list);
         return list;
@@ -85,7 +86,7 @@ public class WebdavClient {
     public List<MarkdownFile> loadFiles() throws IOException {
         return list().stream()
                 .parallel()
-                .filter(file -> !Objects.equals(file.getPath(), Environment.getProperty("webdav.url")))
+                .filter(file -> !Objects.equals(file.getPath(), webdavUrl))
                 .map(this::loadAndParseDavFile)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -93,7 +94,6 @@ public class WebdavClient {
 
     public MarkdownFile loadAndParseDavFile(DavResource davResource) {
         try {
-            String domain = Environment.getProperty("webdav.domain");
             String path = domain + davResource.getPath();
             InputStream in = sardine.get(path);
             logger.info("start to load:{}", path);

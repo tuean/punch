@@ -3,9 +3,12 @@ package com.tuean.cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.tuean.annotation.InitMethod;
+import com.tuean.annotation.Value;
 import com.tuean.consts.ResourceType;
 import com.tuean.entity.FileContent;
 import com.tuean.file.PropertiesFileReader;
+import com.tuean.helper.context.Ctx;
 import com.tuean.util.Util;
 import io.netty.util.internal.StringUtil;
 import org.slf4j.Logger;
@@ -22,8 +25,12 @@ import java.util.List;
 
 import static com.tuean.consts.Const.URL_PATH_STR;
 
+@Ctx
 public class ResourceCache {
     private static final Logger logger = LoggerFactory.getLogger(ResourceCache.class);
+
+    @Value("file.proxy.location") private String location;
+    @Value("markdown.path") private String resourcePath;
 
     public static final String PREFIX = "";
     public LoadingCache<String, FileContent> getCache() {
@@ -41,10 +48,13 @@ public class ResourceCache {
 
 
     public ResourceCache() {
-        String proxyLocation = PropertiesFileReader.getConfig().getSourcePath();
-//        logger.info("start to load resource file: {}", proxyLocation);
 
-        File files = new File(proxyLocation);
+    }
+
+    @InitMethod
+    public void init() {
+        //        logger.info("start to load resource file: {}", proxyLocation);
+        File files = new File(location);
         if (!files.isDirectory() || !files.exists()) throw new RuntimeException("resource file location with wrong config");
         List<String> prefixList = new ArrayList<>();
 //        prefixList.add(PREFIX);

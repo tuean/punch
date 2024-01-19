@@ -22,15 +22,25 @@ import static com.tuean.util.ReflectionUtil.findAnnotatedClasses;
 public class ProjectContext {
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectContext.class);
-    private static Map<String, Bean> ctxMap = new ConcurrentHashMap<>();
-    private static Map<Class, Bean> beanMap = new ConcurrentHashMap<>();
-
-    private Map<String, Bean> beanCache = new ConcurrentHashMap<>();
-
+    private static final Map<String, Bean> ctxMap = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Bean> beanMap = new ConcurrentHashMap<>();
+    private final Map<String, Bean> beanCache = new ConcurrentHashMap<>();
 
 
-    public ProjectContext(String packageName) {
-        init(packageName);
+    public ProjectContext() {
+
+    }
+
+    public void registerBean(Object instance) {
+        if (instance == null) throw new RuntimeException("bean is null");
+        Class<?> clazz = instance.getClass();
+        String beanName = ContextUtil.beanName(clazz);
+        boolean exist = beanMap.containsKey(clazz);
+        if (exist) throw new RuntimeException("already exist bean");
+
+        Bean bean = new Bean(beanName, clazz, instance);
+        beanMap.put(clazz, bean);
+        beanCache.put(beanName, bean);
     }
 
     public void init(String packageName) {
@@ -52,6 +62,10 @@ public class ProjectContext {
         Constructor[] constructors = clazz.getConstructors();
 //        Class[] paramsClass = Arrays.stream(constructors).map(Constructor::getDeclaringClass).toArray(Class[]::new);
         try {
+            boolean hasRegistered = beanCache.containsKey(beanName);
+            if (hasRegistered) {
+                logger.info("bean: {} has registered", beanName); return;
+            }
             Object o = clazz.getDeclaredConstructor().newInstance();
             Bean bean = new Bean(beanName, clazz, o);
             beanCache.put(beanName, bean);
@@ -111,7 +125,8 @@ public class ProjectContext {
                         if (initMethod == null) continue;
                         try {
                             method.invoke(bean.getInstance());
-                        } catch (IllegalAccessException | InvocationTargetException e) {
+                        } catch (Exception e) {
+                            logger.error("bean: {} init method error", bean.getName());
                             throw new RuntimeException(e);
                         }
                     }
@@ -125,12 +140,28 @@ public class ProjectContext {
                 .parallel()
                 .forEach(stringBeanEntry -> {
                     Bean bean = stringBeanEntry.getValue();
-                    Class<?> beanClass = bean.getClazz();
+//                    Class<?> beanClass = bean.getClazz();
                     Field[] fields = bean.getClazz().getDeclaredFields();
                     for (Field field : fields) {
                         Value value = field.getAnnotation(Value.class);
                         if (value == null) continue;
+                        String keyName = value.value();
+                        if (Util.isBlank(keyName)) continue;
 
+                        String fieldType = field.getType().getName();
+                        Object v;
+                        switch (fieldType) {
+                            case "java.lang.String" -> v = env.getProperty(keyName);
+                            case "java.lang.Integer" -> v = Integer.parseInt(env.getProperty(keyName));
+                            default -> throw new IllegalStateException("Unexpected value: " + fieldType);
+                        }
+//                        String envValue = env.getProperty(keyName);
+                        field.setAccessible(true);
+                        try {
+                            field.set(bean.getInstance(), v);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
     }
@@ -145,6 +176,11 @@ public class ProjectContext {
         Bean bean = beanMap.get(clazz);
         if (bean == null) throw new NullPointerException();
         return bean;
+    }
+
+    public static Object getBeanInstanceByClass(Class clazz) {
+        Bean bean = getBeanByClass(clazz);
+        return bean.getInstance();
     }
 
 }
