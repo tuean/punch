@@ -12,9 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.tuean.util.ReflectionUtil.findAnnotatedClasses;
@@ -120,7 +118,18 @@ public class ProjectContext {
                     Bean bean = stringBeanEntry.getValue();
                     Class<?> beanClass = bean.getClazz();
                     Method[] methods = beanClass.getMethods();
-                    for (Method method : methods) {
+                    List<Method> sortedList = Arrays.stream(methods).filter(m -> m.getAnnotation(InitMethod.class) != null).sorted(new Comparator<Method>() {
+                        @Override
+                        public int compare(Method o1, Method o2) {
+                            InitMethod initMethod1 = o1.getAnnotation(InitMethod.class);
+                            InitMethod initMethod2 = o2.getAnnotation(InitMethod.class);
+                            int r1 = initMethod1.order();
+                            int r2 = initMethod2.order();
+                            return r1 - r2;
+                        }
+                    }).toList();
+
+                    for (Method method : sortedList) {
                         InitMethod initMethod = method.getAnnotation(InitMethod.class);
                         if (initMethod == null) continue;
                         try {
@@ -155,7 +164,6 @@ public class ProjectContext {
                             case "java.lang.Integer" -> v = Integer.parseInt(env.getProperty(keyName));
                             default -> throw new IllegalStateException("Unexpected value: " + fieldType);
                         }
-//                        String envValue = env.getProperty(keyName);
                         field.setAccessible(true);
                         try {
                             field.set(bean.getInstance(), v);

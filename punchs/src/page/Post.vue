@@ -105,6 +105,8 @@ const postItem = posts.find(postItem => postItem.title === postTitle)
 console.log("postItem", posts, postItem);
 
 const md = markdownit({
+  breaks: true,
+  typographer: true,
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {

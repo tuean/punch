@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineImpl;
+import com.tuean.annotation.InitMethod;
 import com.tuean.annotation.Value;
 import com.tuean.cache.ResourceCache;
 import com.tuean.config.Environment;
@@ -52,10 +53,12 @@ public class WebdavClient {
         }
     }
 
+    @InitMethod(order = 1)
     public void init() {
         sardine = new SardineImpl(account, password);
     }
 
+    @InitMethod(order = 2)
     public void refreshPostJson() throws IOException {
         List<MarkdownFile> mds = loadFiles();
 

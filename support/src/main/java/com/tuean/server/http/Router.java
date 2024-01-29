@@ -117,11 +117,11 @@ public class Router {
             if (fileContent != null) {
                 return new RequestHolder(fileContent.getResourceType(), fileContent.getBytes());
             } else {
-//                fileContent = fileMappings.get("/index.html");
-//                return new RequestHolder(fileContent.getResourceType(), fileContent.getBytes());
+                fileContent = fileMappings.get("/index.html");
+                return new RequestHolder(fileContent.getResourceType(), fileContent.getBytes());
             }
 
-            return new RequestHolder(ResourceType.json, mapper.writeValueAsBytes(Const.not_found));
+//            return new RequestHolder(ResourceType.json, mapper.writeValueAsBytes(Const.not_found));
         }
 
         return new RequestHolder(ResourceType.json, mapper.writeValueAsBytes(Const.not_found));
