@@ -6,12 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.tuean.annotation.*;
 import com.tuean.cache.ResourceCache;
+import com.tuean.config.Environment;
 import com.tuean.consts.Const;
 import com.tuean.consts.ResourceType;
 import com.tuean.entity.FileContent;
 import com.tuean.entity.RequestHolder;
 import com.tuean.exception.DuplicatePathException;
 import com.tuean.helper.context.Bean;
+import com.tuean.helper.context.Ctx;
+import com.tuean.helper.context.Inject;
 import com.tuean.helper.context.ProjectContext;
 import com.tuean.util.RequestUtils;
 import com.tuean.util.Util;
@@ -27,6 +30,7 @@ import static com.tuean.util.ReflectionUtil.findAnnotatedClasses;
 import static com.tuean.util.RequestUtils.getMathedApiJson;
 
 
+@Ctx
 public class Router {
 
     private static final Logger logger = LoggerFactory.getLogger(Router.class);
@@ -45,12 +49,32 @@ public class Router {
         mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
     }
 
-    private ProjectContext projectContext;
+//    @Inject
+//    private ProjectContext projectContext;
+    
+    @Inject
+    private ResourceCache resourceCache;
+    
+    @Inject
+    private Environment env;
 
-    public Router(ProjectContext projectContext) {
-        this.projectContext = projectContext;
+//    public Router(ProjectContext projectContext) {
+//        this.projectContext = projectContext;
+//    }
+
+
+    public Router() {
+        
     }
 
+    @InitMethod(dependencies = ResourceCache.class, order = Integer.MAX_VALUE)
+    public void init() {
+        String packageName = env.getProperty("package.name");
+        init(packageName, resourceCache);
+        logger.info("init router finished");
+    }
+    
+    
     public void init(String packageName, ResourceCache cache) {
         Set<Class<?>> annotatedClasses = findAnnotatedClasses(packageName, Api.class);
         registerRequestMappings(annotatedClasses);
@@ -61,7 +85,7 @@ public class Router {
         // Print the names of the annotated classes
         for (Class<?> annotatedClass : annotatedClasses) {
             try {
-                Bean bean = projectContext.getBeanByClass(annotatedClass);
+//                Bean bean = projectContext.getBeanByClass(annotatedClass);
                 Method[] methods = annotatedClass.getMethods();
                 Arrays.stream(methods).forEach(method -> {
                     ApiJson apiJson = method.getAnnotation(ApiJson.class);

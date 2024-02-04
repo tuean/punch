@@ -1,6 +1,7 @@
 package com.tuean.job;
 
 import com.tuean.annotation.InitMethod;
+import com.tuean.annotation.Value;
 import com.tuean.file.webdav.WebdavClient;
 import com.tuean.helper.context.Ctx;
 import com.tuean.helper.context.Inject;
@@ -18,6 +19,9 @@ public class PostRefresh {
 
     @Inject WebdavClient client;
 
+    @Value("markdown.refresh.fixdelay.minute")
+    private Integer fixDelay;
+
     public PostRefresh() {
         this.executors = Executors.newScheduledThreadPool(1);
     }
@@ -28,7 +32,7 @@ public class PostRefresh {
             logger.info("refresh job start");
             doJob(client);
             logger.info("refresh job finish");
-        }, 1, 1, TimeUnit.MINUTES);
+        }, 1, fixDelay, TimeUnit.MINUTES);
     }
 
     private void doJob(WebdavClient client) {

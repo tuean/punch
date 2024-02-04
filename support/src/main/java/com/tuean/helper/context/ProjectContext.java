@@ -14,6 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 import static com.tuean.util.ReflectionUtil.findAnnotatedClasses;
 
@@ -50,7 +52,7 @@ public class ProjectContext {
 
         refreshValue();
 
-        runInitMethod();
+        IntStream.range(0, 2).forEach(item -> runInitMethod());
     }
 
 
@@ -110,6 +112,9 @@ public class ProjectContext {
         beanMap.put(bean.getClazz(), bean);
     }
 
+    private Map<String, Boolean> initMethodRunStatus = new ConcurrentHashMap<>(16);
+    private Map<String, AtomicInteger> initMethodTryTimes = new ConcurrentHashMap<>(16);
+
     public void runInitMethod() {
         ctxMap.entrySet()
                 .stream()
@@ -132,11 +137,30 @@ public class ProjectContext {
                     for (Method method : sortedList) {
                         InitMethod initMethod = method.getAnnotation(InitMethod.class);
                         if (initMethod == null) continue;
+                        Class[] dependencies = initMethod.dependencies();
+                        boolean isEmpty = Util.isEmpty(dependencies);
+                        if (!isEmpty) {
+                            boolean canRun = true;
+                            for (int i = 0; i < dependencies.length; i++) {
+                                String beanName = ContextUtil.beanName(dependencies[i]);
+                                boolean checkFinished = initMethodRunStatus.getOrDefault(beanName, false);
+                                if (!checkFinished) {
+                                    int times = notFinishTimes(beanName);
+                                    logger.info("bean: {} init method not ready, {} times", beanName, times);
+                                    canRun = false;
+                                    if (times > 1) throw new RuntimeException("init method check error");
+                                    break;
+                                }
+                            }
+                            if (!canRun) return;
+                        }
                         try {
                             method.invoke(bean.getInstance());
                         } catch (Exception e) {
                             logger.error("bean: {} init method error", bean.getName());
                             throw new RuntimeException(e);
+                        } finally {
+                            initMethodRunStatus.put(bean.getName(), true);
                         }
                     }
                 });
@@ -189,6 +213,10 @@ public class ProjectContext {
     public static Object getBeanInstanceByClass(Class clazz) {
         Bean bean = getBeanByClass(clazz);
         return bean.getInstance();
+    }
+
+    private int notFinishTimes(String beanName) {
+        return initMethodTryTimes.getOrDefault(beanName, new AtomicInteger(0)).addAndGet(1);
     }
 
 }

@@ -41,26 +41,17 @@ public class Main {
         String port = env.getProperty("server.port");
 
         String packageName = "com.tuean";
+        env.addProperty("package.name", packageName);
+
         ProjectContext projectContext = new ProjectContext();
         projectContext.registerBean(env);
         projectContext.init(packageName);
         logger.info("create ctx finish");
 
-        Router router = new Router(projectContext);
-        ResourceCache resourceCache = (ResourceCache) ProjectContext.getBeanInstanceByClass(ResourceCache.class);
-        router.init(packageName, resourceCache); // register api requests
-        logger.info("router init finish");
-
+        Router router = (Router) ProjectContext.getBeanInstanceByClass(Router.class);
         HttpServer httpServer = new HttpServer(Integer.parseInt(port), router);
         httpServer.run();
         logger.info("server started, cost: {} ms", stopWatch.getLastTask());
-
-//        WebdavClient client = new WebdavClient(resourceCache);
-//        client.refreshPostJson();
-
-//        router.init(resourceCache); // register file requests
-
-//        new PostRefresh().start(client); // start to refresh webdav files
     }
 
 }

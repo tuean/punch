@@ -1,5 +1,6 @@
 package com.tuean.util;
 
+import com.tuean.consts.Empty;
 import com.tuean.entity.MarkdownFile;
 import com.tuean.entity.blog.Post;
 import com.tuean.entity.blog.PostItem;
@@ -262,6 +263,14 @@ public class Util {
         matcher.appendTail(sb);
 
         return sb.toString();
+    }
+
+
+    public static boolean isEmpty(Class[] dependencies) {
+        if (dependencies == null) return true;
+        if (dependencies.length == 0) return true;
+        if (dependencies.length == 1 && Empty.class.equals(dependencies[0])) return true;
+        return false;
     }
 
 

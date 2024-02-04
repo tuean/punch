@@ -24,7 +24,7 @@ public class LocalPostCache {
 
     @InitMethod
     public void onApplicationEvent() {
-        setFiles(reader.allMarkdownFiles(markdownPath));
+//        setFiles(reader.allMarkdownFiles(markdownPath));
         logger.info("post cache load complete");
     }
 

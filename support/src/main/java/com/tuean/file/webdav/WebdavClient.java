@@ -15,6 +15,7 @@ import com.tuean.entity.blog.Post;
 import com.tuean.helper.context.Ctx;
 import com.tuean.helper.context.Inject;
 import com.tuean.helper.file.FileGenerator;
+import com.tuean.server.http.Router;
 import com.tuean.util.Util;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -41,6 +42,8 @@ public class WebdavClient {
     @Value("webdav.domain") private String domain;
     @Inject FileGenerator fileGenerator;
     @Inject ResourceCache resourceCache;
+
+    @Inject Router router;
 
     private List<MarkdownFile> temp = new ArrayList<>(1024);
     private Sardine sardine;
@@ -74,6 +77,8 @@ public class WebdavClient {
             byte[] content_2 = mapper.writeValueAsBytes(post);
             resourceCache.storeWithPath(Collections.emptyList(), content_2, "utf8", post.getTitle(), ResourceType.json);
         }
+
+        router.registerFiles(resourceCache);
     }
 
     public List<DavResource> list() throws IOException {

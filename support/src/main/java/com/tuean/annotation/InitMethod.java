@@ -1,5 +1,7 @@
 package com.tuean.annotation;
 
+import com.tuean.consts.Empty;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,6 +13,8 @@ public @interface InitMethod {
 
     String value() default "";
 
-    int order() default Integer.MAX_VALUE;
+    int order() default Integer.MIN_VALUE;
+
+    Class[] dependencies() default Empty.class;
 
 }
