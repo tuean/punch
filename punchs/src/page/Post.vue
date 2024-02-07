@@ -110,13 +110,13 @@ const md = markdownit({
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return '<br /><pre class="hljs"><code>' +
+        return '<pre class="hljs"><code>' +
             hljs.highlight(lang, str, true).value +
-            '</code></pre><br /><br />';
+            '</code></pre>';
       } catch (__) {}
     }
 
-    return '<br /><pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre><br />';
+    return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
   }
 })
 
@@ -140,9 +140,13 @@ const tag_link = tag => "/tags/" + tag
 <style>
 .hljs {
   background-color: #262626;
+  margin-bottom: 1.25em;
+  overflow-y: hidden;
+  overflow-x: scroll;
 }
 
 code {
-  white-space : pre-wrap !important;
+  //white-space : pre-wrap !important;
+
 }
 </style>

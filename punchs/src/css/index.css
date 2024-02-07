@@ -3,16 +3,78 @@
 
 h1 {
     @apply text-2xl;
+    margin-bottom: 1em;
 }
 h2 {
-    @apply text-xl;
+    /*@apply text-xl;*/
+    font-weight: 700;
+    letter-spacing: -.025em;
+    color: #f5f5f5;
+    margin-bottom: 1em;
 }
 h3 {
-    @apply text-lg;
+    /*@apply text-lg;*/
+    font-weight: 600;
+    color: #f5f5f5;
+    margin-bottom: 1em;
 }
-a {
-    @apply text-blue-600 underline;
+
+h4 {
+    font-weight: 500;
+    color: #f5f5f5;
+    margin-bottom: 1em;
 }
+
+p {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+}
+
+/* 更改进度条的整体样式 */
+progress {
+    width: 100%;
+    height: 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: red;
+}
+
+/* 更改已完成部分的样式 */
+progress::-webkit-progress-bar {
+    background-color: #ddd;
+}
+
+/* 更改未完成部分的样式 */
+progress::-webkit-progress-value {
+    background-color: #4CAF50;
+}
+
+/* 更改进度条上的文本样式 */
+progress::-webkit-progress-text {
+    color: white;
+}
+
+body::-webkit-scrollbar {
+    width: 5px !important;
+    height: 5px !important;
+}
+body::-webkit-scrollbar-track {
+    background: #383838 !important;
+}
+body::-webkit-scrollbar-thumb {
+    background-color: #cfc9c5 !important;
+    border: 1px solid #1a1a1a !important;
+    border-radius: 1px !important;
+}
+
+/*!* 滚动条滑块悬停 *!*/
+/*::-webkit-scrollbar-thumb:hover {*/
+/*    background-color: #555;*/
+/*}*/
+
+/*a {*/
+/*    @apply text-blue-600 underline;*/
+/*}*/
 
 @tailwind components;
 @tailwind utilities;

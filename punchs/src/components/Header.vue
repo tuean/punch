@@ -4,7 +4,7 @@
       <a href="/" aria-label="Tuean's blog">
         <div class="flex items-center justify-between">
           <div class="mr-3">
-            <img src="/favicon.ico" alt="Logo" class="h-10 w-auto"/>
+            <img src="/tuean.ico" alt="Logo" class="h-10 w-auto"/>
           </div>
           <div class="hidden text-4xl font-semibold sm:block font-title">{{ title }}</div>
         </div>
